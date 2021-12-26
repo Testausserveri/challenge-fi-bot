@@ -1,0 +1,328 @@
+const { Interaction, TextChannel, MessageEmbed, MessageAttachment, Message, MessageActionRow, MessageButton } = require("discord.js")
+const request = require("../utils/request.js")
+const check_for_access = require("../utils/check_for_access.js")
+const findMessage = require("../utils/find_message.js")
+
+/**
+ * Create a role selection embed
+ * @param {String} title The embed title
+ * @param {String} description The embed description
+ * @param {String} footer The embed footer
+ * @param {String} image The embed thumbnail
+ * @param {TextChannel} channel The text channel to place the role selection in
+ * @returns {Promise<Message>}
+ */
+async function createRoleSelection(title, description, footer, image, color, channel){
+    const embed = new MessageEmbed({
+        title,
+        description
+    })
+    let thumbnailAttachment = null
+    if(image !== undefined){
+        thumbnailAttachment = new MessageAttachment(new Buffer.from(image, "base64"), "thumbnail.png")
+        embed.setThumbnail("attachment://thumbnail.png")
+    }
+    if(footer !== undefined) embed.setFooter(footer)
+    if(color !== undefined) embed.setColor(color) 
+    embed.addField("How to use", "Click the buttons below to select roles. The buttons function as toggles.")
+    const msg = await channel.send({ embeds: [embed], files: thumbnailAttachment !== null ? [thumbnailAttachment] : undefined })
+    return msg
+}
+
+/**
+ * Generate button components from a list
+ * @param {Object} list The button configuration 
+ * @returns {MessageButton[]}
+ */
+function generateButtonComponents(list){
+    let components = []
+    for(const key of Object.keys(list)){
+        components.push(new MessageButton()
+            .setStyle("PRIMARY")
+            .setLabel(list[key])
+            .setCustomId(key)
+        )
+    }
+    return components
+}
+
+/**
+ * Role selection module
+ */
+module.exports = {
+    /**
+     * Handle interactionCreate event
+     * @param {Interaction} interaction
+     * @returns {Promise<void>} 
+     */
+    interactionCreate: async interaction => {
+        if(interaction.commandName === "role-selection"){
+            // Check for access
+            if(!check_for_access(interaction)){
+                interaction.reply({
+                    content: "Permission denied.",
+                    ephemeral: true
+                })
+                return
+            }
+
+            // Handle application commands
+            if(interaction.options._subcommand === "create"){
+                let title, description, footer, image, color = null
+                for(const option of interaction.options._hoistedOptions){
+                    switch(option.name){
+                        case "title": {
+                            title = option.value
+                            break
+                        }
+                        case "description": {
+                            description = option.value
+                            break
+                        }
+                        case "footer": {
+                            footer = option.value
+                            break
+                        }
+                        case "color": {
+                            color = /^#([0-9a-f]{3}){1,2}$/i.test(option.value) ? option.value : null
+                            break
+                        }
+                        case "thumbnail_url": {
+                            // This is more complex, download the image with a get from the URL and convert to base 64
+                            try {
+                                // Only allow Discord CDN urls
+                                const url = new URL(option.value)
+                                if(global.whitelistedHosts.includes(url.host)){
+                                    const imageRequest = await request("GET", option.value, {}, null)
+                                    if(imageRequest.status === 200){
+                                        image = imageRequest.data.toString("base64")
+                                    }else {
+                                        image = false
+                                    }
+                                }else {
+                                    image = false
+                                }
+                            }
+                            catch(_){
+                                image = false
+                            }
+                        }
+                    }
+                }
+                if(image === false){ // Image download failed
+                    interaction.reply({
+                        content: "Failed to download image. (Only PNGs and urls from Discord's CDNs are allowed!)",
+                        ephemeral: true
+                    })
+                }else {
+                    // Add database entry
+                    const previousSelection = await global.schemas.RoleSelectionModel.findOne({ id: interaction.guild.id }).exec()
+                    if(previousSelection !== null){
+                        // This limit can be easily removed, just set some other max number
+                        interaction.reply({
+                            content: "For now there can only be one role selection for each server.",
+                            ephemeral: true
+                        })
+                    }else {
+                        const msg = await createRoleSelection(title, description, footer, image, color, interaction.channel)
+                        global.schemas.RoleSelectionModel.findOneAndUpdate(
+                            { id: interaction.guild.id, message: msg.id },
+                            { 
+                                id: interaction.guild.id, 
+                                embed: {
+                                    title,
+                                    description,
+                                    footer,
+                                    image
+                                },
+                                message: msg.id,
+                                roles: {}
+                            },
+                            { upsert: true }
+                        ).exec().then(() => {
+                            interaction.reply({
+                                content: "Role selection created. Id: `" + msg.id + "`",
+                                ephemeral: true
+                            })
+                        }).catch((e) => {
+                            console.error(e)
+                            msg.delete()
+                            interaction.reply({
+                                content: "Failed.",
+                                ephemeral: true
+                            })
+                        })
+                    }
+                }
+            }else if(interaction.options._subcommand === "add-option"){
+                const messageId = interaction.options._hoistedOptions.filter(option => option.name === "message_id")[0].value
+                const text = interaction.options._hoistedOptions.filter(option => option.name === "button_text")[0].value
+                const roleId = interaction.options._hoistedOptions.filter(option => option.name === "role_id")[0].value
+                const roleSelection = await global.schemas.RoleSelectionModel.findOne({ message: messageId, id: interaction.guild.id }).exec()
+                if(roleSelection === null){
+                    interaction.reply({
+                        content: "No such role selection exists for this server.",
+                        ephemeral: true
+                    })
+                }else {
+                    if(interaction.guild.roles.resolve(roleId) !== null){
+                        // Make sure the role is not yet an option
+                        const notAnOption = Object.keys(roleSelection.roles).filter(id => id === roleId).length === 0
+                        if(notAnOption){
+                            // Fetch the message
+                            const msg = await findMessage(roleSelection.message, interaction.guild)
+                            if(!msg){
+                                global.schemas.RoleSelectionModel.findOneAndRemove({ id: interaction.guild.id }).exec()
+                                interaction.reply({
+                                    content: "This role selection has expired.",
+                                    ephemeral: true
+                                })
+                                return
+                            }
+                            // Update the database
+                            roleSelection.roles[roleId] = text
+                            global.schemas.RoleSelectionModel.findOneAndUpdate(
+                                { id: interaction.guild.id },
+                                { 
+                                    $set: { roles: roleSelection.roles }
+                                }
+                            ).exec().then(() => {
+                                // Edit the message
+                                const components = new MessageActionRow()
+                                components.addComponents(...generateButtonComponents(roleSelection.roles))
+                                msg.edit({ components: [components] })
+                                interaction.reply({
+                                    content: "Option added.",
+                                    ephemeral: true
+                                })
+                            }).catch((e) => {
+                                console.error(e)
+                                interaction.reply({
+                                    content: "Failed.",
+                                    ephemeral: true
+                                })
+                            })
+                        }else {
+                            interaction.reply({
+                                content: "The specified role is already selectable.",
+                                ephemeral: true
+                            })
+                        }
+                    }else {
+                        interaction.reply({
+                            content: "No such role exists.",
+                            ephemeral: true
+                        })
+                    }
+                }
+            }else if(interaction.options._subcommand === "remove-option"){
+                const roleId = interaction.options._hoistedOptions.filter(option => option.name === "role_id")[0].value
+                const roleSelection = await global.schemas.RoleSelectionModel.findOne({ id: interaction.guild.id }).exec()
+                if(roleSelection === null){
+                    interaction.reply({
+                        content: "No role selection exists for this server.",
+                        ephemeral: true
+                    })
+                }else {
+                    if(interaction.guild.roles.resolve(roleId) !== null){
+                        // Make sure the role is not yet an option
+                        const notAnOption = Object.keys(roleSelection.roles).filter(id => id === roleId).length === 0
+                        if(!notAnOption){
+                            // Fetch the message
+                            const msg = await findMessage(roleSelection.message, interaction.guild)
+                            if(!msg){
+                                global.schemas.RoleSelectionModel.findOneAndRemove({ id: interaction.guild.id }).exec()
+                                interaction.reply({
+                                    content: "This role selection has expired.",
+                                    ephemeral: true
+                                })
+                                return
+                            }
+                            // Update the database
+                            delete roleSelection.roles[roleId]
+                            global.schemas.RoleSelectionModel.findOneAndUpdate(
+                                { id: interaction.guild.id },
+                                { 
+                                    $set: { roles: roleSelection.roles }
+                                }
+                            ).exec().then(() => {
+                                // Edit the message
+                                const components = new MessageActionRow()
+                                components.addComponents(...generateButtonComponents(roleSelection.roles))
+                                msg.edit({ components: [components] })
+                                interaction.reply({
+                                    content: "Option removed.",
+                                    ephemeral: true
+                                })
+                            }).catch((e) => {
+                                console.error(e)
+                                interaction.reply({
+                                    content: "Failed.",
+                                    ephemeral: true
+                                })
+                            })
+                        }else {
+                            interaction.reply({
+                                content: "The specified role is not selectable.",
+                                ephemeral: true
+                            })
+                        }
+                    }else {
+                        interaction.reply({
+                            content: "No such role exists.",
+                            ephemeral: true
+                        })
+                    }
+                }
+            }else if(interaction.options._subcommand === "remove"){
+                const messageId = interaction.options._hoistedOptions.filter(option => option.name === "message_id")[0].value
+                const roleSelection = await global.schemas.RoleSelectionModel.findOne({ message: messageId, id: interaction.guild.id }).exec()
+                if(roleSelection !== null){
+                    await global.schemas.RoleSelectionModel.findOneAndRemove({ message: messageId, id: interaction.guild.id }).exec()
+                    const msg = await findMessage(roleSelection.message, interaction.guild)
+                    if(msg) await msg.delete()
+                    interaction.reply({
+                        content: "Role selection removed.",
+                        ephemeral: true
+                    })
+                }else {
+                    interaction.reply({
+                        content: "No such role selection exists.",
+                        ephemeral: true
+                    })
+                }
+            }
+        }
+    },
+    /**
+     * Handle button clicks
+     * @param {Interaction} interaction 
+     * @returns {Promise<void>}
+     */
+    clickButton: async interaction => {
+        const roleId = interaction.customId
+        const roleSelection = await global.schemas.RoleSelectionModel.findOne({ message: interaction.message.id, id: interaction.guild.id }).exec()
+        if(roleSelection === null) return
+        const role = await interaction.guild.roles.fetch(roleId)
+        try {
+            let msg = ""
+            if(interaction.member.roles.cache.has(roleId)){
+                await interaction.member.roles.remove(roleId)
+                msg = "removed from"
+            }else {
+                await interaction.member.roles.add(roleId)
+                msg = "added to"
+            }
+            interaction.reply({
+                content: `✅ Role \`${role.name}\` ${msg} your account.`,
+                ephemeral: true
+            })
+        }
+        catch(e){
+            interaction.reply({
+                content: "An error occurred :(",
+                ephemeral: true
+            })
+        }
+    }
+}
