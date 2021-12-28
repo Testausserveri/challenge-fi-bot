@@ -5,6 +5,7 @@ const { Client } = require("discord.js")
  */
 module.exports = client => {
     for(const guild of client.guilds.cache){
+        // TODO: Types messed up...
         guild[1].commands.set([
             // Role selection
             {
@@ -200,6 +201,91 @@ module.exports = client => {
                                 type: 3
                             }
                         ]
+                    }
+                ]
+            },
+            // CTFd integration
+            {
+                name: "ctfd",
+                description: "Manage the CTFd integration",
+                type: 1,
+                options: [
+                    {
+                        name: "configure-api",
+                        description: "Configure the CTFd integration",
+                        type: 1,
+                        options: [
+                            {
+                                name: "api-url",
+                                description: "The CTFd API url",
+                                type: 3,
+                                required: true
+                            },
+                            {
+                                name: "api-token",
+                                description: "The CTFd API Token"
+                            }
+                        ]
+                    },
+                    {
+                        name: "configure-leaderboard-roles",
+                        description: "Set which roles are given to various leaderboard positions",
+                        type: 1,
+                        options: [
+                            {
+                                name: "1st-position-role-id",
+                                description: "The role given to the user on 1st place",
+                                type: 3,
+                                required: false
+                            },
+                            {
+                                name: "2nd-position-role-id",
+                                description: "The role given to the user on 1st place",
+                                type: 3,
+                                required: false
+                            },
+                            {
+                                name: "3rd-position-role-id",
+                                description: "The role given to the user on 1st place",
+                                type: 3,
+                                required: false
+                            },
+                        ]
+                    },
+                    {
+                        name: "toggle-challenge-notifications",
+                        description: "Enable or disable new challenge notifications.",
+                        type: 3,
+                        choices: [
+                            {
+                                name: "enable",
+                                value: 1
+                            },
+                            {
+                                name: "disable",
+                                value: 0
+                            }
+                        ]
+                    },
+                    {
+                        name: "toggle-solve-notifications",
+                        description: "Enable or disable new solve notifications.",
+                        type: 3,
+                        choices: [
+                            {
+                                name: "enable",
+                                value: 1
+                            },
+                            {
+                                name: "disable",
+                                value: 0
+                            }
+                        ]
+                    },
+                    {
+                        name: "create-leaderboard-clone",
+                        description: "Create an updating leaderboard embed.",
+                        type: 3
                     }
                 ]
             }

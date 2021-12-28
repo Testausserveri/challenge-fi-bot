@@ -17,7 +17,15 @@ const CTFdIntegrationModel = model("CTFdIntegrationModel", Schema({
     apiKey: String, // CTFd API key
     apiUrl: String, // CTFd API URL 
     cacheChallenges: Array, // List of cached challenges ids'
-    cachedLeaderboard: Array // Leaderboard in a simplified format
+    cachedLeaderboard: Array, // Leaderboard in a simplified format,
+    challengesEnabled: Boolean, // Enable/disable challenge notification
+    leaderboardRolesEnabled: Boolean, // Enable/disable leaderboard role sync
+    leaderboardRoles: Array, // Enable/disable roles
+    solvesEnabled: Boolean, // Solve notifications
+    leaderboardSync: {
+        enabled: Boolean, // Enable/disable
+        message: String // Leaderboard message id
+    }
 }))
 
 const PollModel = model("PollModel", Schema({
