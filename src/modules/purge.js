@@ -1,13 +1,19 @@
+/* eslint-disable brace-style */
+/* eslint-disable no-param-reassign */
+// eslint-disable-next-line no-unused-vars
 const { Interaction } = require("discord.js")
-const check_for_access = require("../utils/check_for_access.js")
+const checkForAccess = require("../utils/check_for_access")
+const thinking = require("../utils/thinking")
+
 /**
  * Purge messages from a channel
- * @param {Interaction} interaction 
+ * @param {Interaction} interaction
+ * @param {Function} next If we will move on to the next handler
  */
-module.exports = async interaction => {
-    if(interaction.commandName === "purge"){
+module.exports = async (interaction, next) => {
+    if (interaction.commandName === "purge") {
         // Check for access
-        if(!check_for_access(interaction)){
+        if (!checkForAccess(interaction)) {
             interaction.reply({
                 content: "Permission denied.",
                 ephemeral: true
@@ -15,41 +21,49 @@ module.exports = async interaction => {
             return
         }
 
-        // The 500 messages at once maximum is not required, but a measure to avoid API rate limiting
-        const count = parseInt(interaction.options._hoistedOptions.filter(option => option.name === "count")[0].value)
-        const userId = interaction.options._hoistedOptions.filter(option => option.name === "user-id")[0]?.value
-        if(count < 500){
-            await interaction.reply({
-                content: "Deleting messages...",
-                type: 5,
-                ephemeral: true
-            })
-            const remove = async count => {
-                count = count - 100
+        // The 500 messages at once maximum is not required,
+        // but a measure to avoid API rate limiting
+        const messageDeleteCount = parseInt(interaction.options._hoistedOptions.filter((option) => option.name === "count")[0].value, 10)
+        const userId = interaction.options._hoistedOptions.filter((option) => option.name === "user-id")[0]?.value
+        if (messageDeleteCount < 500) {
+            await thinking(interaction)
+            // TODO: Resolve all messages, then delete them
+            const messagesToDelete = []
+            const remove = async (count) => {
+                // eslint-disable-next-line no-param-reassign
+                count -= 100
                 let limit = 100
-                if(count < 0) limit = 100 - Math.abs(count)
+                if (count < 0) limit = 100 - Math.abs(count)
                 const messages = await interaction.channel.messages.fetch({ limit })
-                for(const message of messages){
-                    if(userId){
-                        if(message[1].author.id == userId) await message[1].delete()
-                        else count = count + 1
-                    }else {
-                        await message[1].delete()
-                    }
+                // eslint-disable-next-line no-restricted-syntax
+                for (const message of messages) {
+                    if (userId) {
+                        if (message[1].author.id === userId && message[1].deletable) messagesToDelete.push(message[1])
+                        else count += 1
+                    } else if (message[1].deletable) messagesToDelete.push(message[1])
+                    else count += 1
                 }
-                if(count > 0) await remove(count)
-                return
+                if (count > 0) await remove(count)
             }
-            await remove(count)
+            await remove(messageDeleteCount)
+            // eslint-disable-next-line no-restricted-syntax
+            for await (const message of messagesToDelete) {
+                try { await message.delete() }
+                // TODO: Handle this better?
+                // eslint-disable-next-line no-empty
+                catch (_) {}
+            }
             interaction.followUp({
-                content: count + " messages removed.",
+                content: `${messageDeleteCount} messages removed.`,
                 ephemeral: true
             })
-        }else {
+        } else {
             interaction.reply({
                 content: "You are trying to delete too many messages (max 500).",
                 ephemeral: true
             })
         }
+    } else {
+        next()
     }
 }
