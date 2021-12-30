@@ -146,13 +146,14 @@ setInterval(async () => {
                                 if (doNotNotify) continue
                                 // eslint-disable-next-line no-restricted-syntax
                                 for await (const newSolve of newSolves) {
+                                    // eslint-disable-next-line no-continue
+                                    if (newSolve.index > 3) continue // Only display top 3, TODO: Maybe make this configurable?
                                     const embed = new MessageEmbed()
-                                    embed.setTitle("New solve!")
-                                    embed.setDescription(`\`${
-                                        newSolve.name
-                                    }\` solved \`${name}\`!\nThey were the \`${
-                                        newSolve.index
-                                    }${getNumberEnding(newSolve.index)}\` to solve the challenge.\nThe solution was worth \`${value}\` points.`)
+                                    embed.setTitle(`New solve! ${newSolve.index === 1 ? "FIRST BLOOD!" : ""}`)
+                                    embed.setDescription(`
+                                    \`${newSolve.name}\` solved \`${name}\`!
+                                    They were the \`${newSolve.index}${getNumberEnding(newSolve.index)}\` to solve the challenge.
+                                    The solution was worth \`${value}\` points.`)
                                     embed.setColor("GREEN")
                                     embed.setFooter(`ID: ${newSolve.account_id}`)
                                     embed.setTimestamp(new Date().getTime())

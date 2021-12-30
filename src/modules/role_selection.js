@@ -77,7 +77,6 @@ module.exports = async (interaction, next) => {
         const role = await interaction.guild.roles.fetch(roleId)
         try {
             let msg = ""
-            // TODO: D
             if (interaction.member.roles.cache.has(roleId)) {
                 await interaction.member.roles.remove(roleId)
                 msg = "removed from"
