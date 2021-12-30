@@ -14,6 +14,13 @@ require("./utils/console")
 const slashCommands = require("./configuration/slash_commands")
 global.schemas = require("./configuration/database_schemas")
 
+// General globals
+global.databaseReady = false
+global.whitelistedHosts = ["cdn.discordapp.com", "cdn.discord.com", "media.discordapp.net"] // Hosts from which we can download thumbnails from
+global.whitelistedCTFdHosts = ["challenge.fi"] // Hosts that can be used in the CTFd integration
+global.pollTimeCTFd = 30000 // 30 seconds
+global.discordPollUpdatedInterval = 5000 // 5 seconds
+
 // Modules
 const modules = {}
 console.log("Running module discovery...")
@@ -35,14 +42,7 @@ console.log("Module discovery complete. Connecting to services...")
 const intents = new Intents()
 intents.add(Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_INTEGRATIONS, Intents.FLAGS.GUILD_MESSAGE_REACTIONS)
 const client = new Client({ intents })
-
-// General globals
-global.databaseReady = false
 global.client = client // Should not be needed...
-global.whitelistedHosts = ["cdn.discordapp.com", "cdn.discord.com", "media.discordapp.net"] // Hosts from which we can download thumbnails from
-global.whitelistedCTFdHosts = ["challenge.fi"] // Hosts that can be used in the CTFd integration
-global.pollTimeCTFd = 0.5 * 60000 // 30 seconds
-global.discordPollUpdatedInterval = 5000 // 5 seconds
 
 // Establish database connection
 if (process.env.DATABASE_URL === undefined) throw new Error("Missing DATABASE_URL from env")
@@ -107,7 +107,6 @@ client.on("interactionCreate", async (interaction) => {
         let breakOut = true
         const nextCall = () => { breakOut = false }
         await module(interaction, nextCall)
-        console.log(name, breakOut)
         if (breakOut) break
     }
 })

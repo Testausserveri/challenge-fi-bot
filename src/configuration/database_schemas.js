@@ -1,3 +1,4 @@
+/* eslint-disable new-cap, function-paren-newline */
 const { model, Schema } = require("mongoose")
 
 const RoleSelectionModel = model(

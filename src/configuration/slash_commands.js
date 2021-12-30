@@ -14,25 +14,25 @@ module.exports = [
                 options: [
                     {
                         name: "title",
-                        description: "Embed title",
+                        description: "The role selection title.",
                         required: true,
                         type: 3
                     },
                     {
                         name: "description",
-                        description: "Embed description",
+                        description: "The role selection description.",
                         required: true,
                         type: 3
                     },
                     {
                         name: "footer",
-                        description: "Embed footers",
+                        description: "The role selection footer.",
                         required: false,
                         type: 3
                     },
                     {
                         name: "thumbnail_url",
-                        description: "Embed thumbnail",
+                        description: "The role selection message thumbnail.",
                         required: false,
                         type: 3
                     },
@@ -52,19 +52,19 @@ module.exports = [
                 options: [
                     {
                         name: "message_id",
-                        description: "The message id",
+                        description: "The role selection message id.",
                         required: true,
                         type: 3
                     },
                     {
                         name: "button_text",
-                        description: "The button text",
+                        description: "The role selection button text.",
                         required: true,
                         type: 3
                     },
                     {
                         name: "role_id",
-                        description: "The role id",
+                        description: "The role to assign on button press.",
                         required: true,
                         type: 3
                     }
@@ -78,13 +78,13 @@ module.exports = [
                 options: [
                     {
                         name: "message_id",
-                        description: "The message id",
+                        description: "The poll message id.",
                         required: true,
                         type: 3
                     },
                     {
                         name: "role_id",
-                        description: "The role id",
+                        description: "The role id of the added role selection option.",
                         required: true,
                         type: 3
                     }
@@ -97,7 +97,7 @@ module.exports = [
                 options: [
                     {
                         name: "message_id",
-                        description: "The message id",
+                        description: "The role selection message id.",
                         required: true,
                         type: 3
                     }
@@ -108,8 +108,7 @@ module.exports = [
     // Configure accesses
     {
         name: "configure-access",
-        description:
-            "Set bot access role and restrict slash command visibility.",
+        description: "Set a role with command execution command execution privileges.",
         type: 1,
         options: [
             {
@@ -123,12 +122,12 @@ module.exports = [
     // Purge
     {
         name: "purge",
-        description: "Purge messages from a channel.",
+        description: "Purge messages in bulk from a channel.",
         type: 1,
         options: [
             {
                 name: "count",
-                description: "How many messages to remove.",
+                description: "The number of messages to remove.",
                 required: true,
                 type: 3
             },
@@ -143,7 +142,7 @@ module.exports = [
     // Polls
     {
         name: "poll",
-        description: "Manage polls",
+        description: "Manage community polls.",
         type: 1,
         options: [
             {
@@ -153,32 +152,32 @@ module.exports = [
                 options: [
                     {
                         name: "title",
-                        description: "Embed title",
+                        description: "The poll title.",
                         required: true,
                         type: 3
                     },
                     {
                         name: "description",
-                        description: "Embed description",
+                        description: "The poll description.",
                         required: true,
                         type: 3
                     },
                     {
                         name: "options",
                         description:
-                            "A semicolon separated list of poll options",
+                            "A semicolon separated list of all the poll options.",
                         required: true,
                         type: 3
                     },
                     {
                         name: "thumbnail_url",
-                        description: "Embed thumbnail",
+                        description: "The poll thumbnail.",
                         required: false,
                         type: 3
                     },
                     {
                         name: "color",
-                        description: "Embed color",
+                        description: "The poll message sidebar color (hex).",
                         required: false,
                         type: 3
                     },
@@ -198,7 +197,7 @@ module.exports = [
                 options: [
                     {
                         name: "message_id",
-                        description: "The message id",
+                        description: "The poll message id.",
                         required: true,
                         type: 3
                     }
@@ -209,7 +208,7 @@ module.exports = [
     // CTFd integration
     {
         name: "ctfd",
-        description: "Manage the CTFd integration",
+        description: "Manage the CTFd integration.",
         type: 1,
         options: [
             {
@@ -220,17 +219,18 @@ module.exports = [
                 options: [
                     {
                         name: "api-host",
-                        description: "The CTFd API host",
+                        description: "The CTFd API host.",
                         type: 3,
                         required: true
                     },
                     {
                         name: "api-token",
-                        description: "The CTFd API Token",
+                        description: "The CTFd API Token.",
                         type: 3
                     }
                 ]
             },
+            /*
             {
                 name: "configure-leaderboard-roles",
                 description:
@@ -256,7 +256,8 @@ module.exports = [
                         required: false
                     }
                 ]
-            },
+            },¨
+            */
             {
                 name: "configure-chall-notifications",
                 description:
@@ -267,7 +268,7 @@ module.exports = [
                         name: "channel-id",
                         type: 3,
                         description:
-                            "The id of the channel to send notifications to."
+                            "The id of the channel to send the notifications to."
                     }
                 ]
             },
@@ -281,13 +282,29 @@ module.exports = [
                         name: "channel-id",
                         type: 3,
                         description:
-                            "The id of the channel to send notifications to."
+                            "The id of the channel to send the notifications to."
                     }
                 ]
-            },
+            }
+            /*
             {
                 name: "create-leaderboard-clone",
                 description: "Create an updating leaderboard embed.",
+                type: 3
+            }
+            */
+        ]
+    },
+    // Help message
+    {
+        name: "help",
+        description: "Get information on how to use the bot.",
+        type: 1,
+        options: [
+            {
+                name: "command-name",
+                description: "The command you want to learn more about.",
+                required: false,
                 type: 3
             }
         ]

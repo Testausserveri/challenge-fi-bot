@@ -16,14 +16,39 @@ const checkForAccess = require("../utils/check_for_access")
 const thinking = require("../utils/thinking")
 
 /**
+ * Convert a number into an emoji. The world that we live in nowadays... :p
+ * @param {Number} number
+ * @param {Boolean} asObject Get output as a Discord.js emoji
+ * @returns {String}
+ */
+function numberToEmoji(number, asObject) {
+    const table = {
+        0: "0️⃣",
+        1: "1️⃣",
+        2: "2️⃣",
+        3: "3️⃣",
+        4: "4️⃣",
+        5: "5️⃣",
+        6: "6️⃣",
+        7: "7️⃣",
+        8: "8️⃣",
+        9: "9️⃣"
+    }
+    if (!asObject) return number.toString().split("").map((digit) => table[digit]).join("")
+    return number.toString().split("").map((digit) => ({ name: table[digit] }))
+}
+
+/**
  * Generate button components from a list
  * @param {Object} list Button configuration list
+ * @param {*} replaceLabel Replace the label of every button with this
  * @returns {MessageButton[]}
  */
-function generateButtonComponents(list) {
+function generateButtonComponents(list, replaceLabel) {
     return Object.keys(list).map((key) => new MessageButton()
-        .setStyle("PRIMARY")
-        .setLabel(key)
+        .setStyle("SECONDARY")
+        .setLabel(replaceLabel ?? list[key])
+        .setEmoji(numberToEmoji(key).replace(/:/g, ""))
         .setCustomId(key))
 }
 
@@ -45,13 +70,13 @@ async function createPoll(title, description, image, color, options, end, channe
         embed.setThumbnail("attachment://thumbnail.png")
     }
     if (color) embed.setColor(color)
-    embed.addField("Options", Object.keys(options).map((key) => `\`[ 0 ]\` – **${key}** ${options[key]}`).join("\n"))
+    embed.addField("Options", `‎\n${Object.keys(options).map((key) => `**${numberToEmoji(key)}** ${options[key]}`).join("\n\n")}\n\n**Click the buttons below to vote!**`)
     const endDate = new Date()
     endDate.setTime(end)
     embed.setFooter("This poll will end")
     embed.setTimestamp(endDate)
-    embed.addField("How to vote?", "Click the buttons below to vote.")
-    const buttons = new MessageActionRow().addComponents(...generateButtonComponents(options))
+    embed.setAuthor("Poll")
+    const buttons = new MessageActionRow().addComponents(...generateButtonComponents(options, "0"))
     const msg = await channel.send({ embeds: [embed], components: [buttons], files: thumbnailAttachment !== null ? [thumbnailAttachment] : undefined })
     return msg
 }
@@ -64,9 +89,9 @@ async function createPoll(title, description, image, color, options, end, channe
  */
 async function endPoll(message, document) {
     message.embeds[0].fields[0].name = "Results"
-    const winner = Object.keys(document.votes).sort((a, b) => a.length - b.length).reverse()
+    const winner = Object.keys(document.votes).sort((a, b) => a.length - b.length)
     // eslint-disable-next-line max-len
-    message.embeds[0].fields[0].value = `${Object.keys(document.options).map((key) => `\`[ ${document.votes[key].length} ]\` – **${key}** ${document.options[key]}`).join("\n")}\n\n**Most votes:** \`${winner[0]} ${document.options[winner[0]]}\``
+    message.embeds[0].fields[0].value = `‎\n${Object.keys(document.options).map((key) => `\`[ ${document.votes[key].length} ]\` **${numberToEmoji(key)}** ${document.options[key]}`).join("\n\n")}\n\n**Most votes:** \`${winner[0]} ${document.options[winner[0]]}\``
     message.embeds[0].fields = [message.embeds[0].fields[0]]
     message.embeds[0].setFooter("Poll ended.")
     message.embeds[0].timestamp = null
@@ -76,12 +101,11 @@ async function endPoll(message, document) {
 }
 
 // Check for polls to be closed & update vote counts
+if (global.discordPollUpdatedInterval < 5000) console.warn("The Discord poll-message update polling interval is too low! Rate-limiting might occur!")
 setInterval(async () => {
-    console.log("POLLING")
     // eslint-disable-next-line no-restricted-syntax
     for await (const document of global.schemas.PollModel.find()) {
         const message = await findMessage(document.message, await global.client.guilds.fetch(document.id))
-
         if (message === null) {
             // Expired, remove it
             await global.schemas.PollModel.findOneAndRemove({ id: document.id, message: document.message })
@@ -93,11 +117,12 @@ setInterval(async () => {
             await endPoll(message, document)
             return
         }
+        const buttonData = Object.fromEntries(Object.keys(document.votes).map((key) => [key, document.votes[key].length.toString()]))
+        const buttons = new MessageActionRow().addComponents(...generateButtonComponents(buttonData))
         // Update message vote counts
-        const newValue = Object.keys(document.options).map((key) => `\`[ ${document.votes[key].length} ]\` – **${key}** ${document.options[key]}`).join("\n")
-        if (message.embeds[0].fields[0].value !== newValue) {
-            message.embeds[0].fields[0].value = newValue
-            message.edit({ embeds: message.embeds, files: [], attachments: [] })
+        const oldValue = Object.fromEntries(message.components[0].components.map((button) => [button.customId, button.label]))
+        if (buttonData !== oldValue) {
+            message.edit({ components: [buttons] })
         }
     }
 }, global.discordPollUpdatedInterval)
@@ -111,7 +136,6 @@ module.exports = async (interaction, next) => {
     if (interaction.isButton()) {
         // Handle button click
         const option = interaction.customId
-        console.log("IS BUTTON")
         await thinking(interaction)
         const poll = await global.schemas.PollModel.findOne({ message: interaction.message.id, id: interaction.guild.id }).exec()
         if (poll === null) {
@@ -130,7 +154,7 @@ module.exports = async (interaction, next) => {
         poll.votes[option].push(interaction.user.id)
         await global.schemas.PollModel.findOneAndUpdate({ message: interaction.message.id, id: interaction.guild.id }, { $set: { votes: poll.votes } }).exec()
         interaction.followUp({
-            content: `✅ Your vote for \`${option}\` was confirmed ${lastVote}.`,
+            content: `✅ Your vote for \`${option}\` was confirmed. ${lastVote}`,
             ephemeral: true
         })
     } else {
@@ -213,7 +237,6 @@ module.exports = async (interaction, next) => {
                             time = multiplier * 1000
                         }
                         }
-                        console.log(multiplier, format, time)
                         end = (new Date().getTime() + time).toString()
                         break
                     }

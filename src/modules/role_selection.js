@@ -37,6 +37,7 @@ async function createRoleSelection(title, description, footer, image, color, cha
     }
     if (footer !== undefined) embed.setFooter(footer)
     if (color !== undefined) embed.setColor(color)
+    embed.setAuthor("Role selection")
     embed.addField("How to use", "Click the buttons below to select roles. The buttons function as toggles.")
     const msg = await channel.send({ embeds: [embed], files: thumbnailAttachment !== null ? [thumbnailAttachment] : undefined })
     return msg

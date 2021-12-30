@@ -26,6 +26,7 @@ module.exports = {
         "no-console": ["error", { allow: ["warn", "log", "error", "debug"] }],
         "operator-linebreak": ["error", "after"],
         "new-cap": ["error", { newIsCap: false }],
-        "max-len": ["error", { code: 230 }]
+        "max-len": ["error", { code: 230 }],
+        "function-paren-newline": ["warn", { minItems: 3 }]
     }
 }
