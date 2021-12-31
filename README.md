@@ -1,10 +1,12 @@
 # Challenge.fi-bot
-A community management bot for the <a href="https://challenge.fi">challenge.fi</a> Discord, implementing a CTFd-platform integration.<br>
-This bot is of course not limited to be used in that server, you may download these sources and use it in any Discord server.<br>
+A community management bot for the <a href="https://challenge.fi">challenge.fi</a> Discord, which implements a CTFd-platform integration.<br>
+This bot is of course not limited to only that server, you may download these sources and use it in any Discord server you want.<br>
 Instructions on how to do that will be below.
 <br>
 <br>
-This project was originally developed by `Eemil S. (Esinko#7976)` at `Testausserveri ry` and completed on the `31st of December 2021`.
+This project was originally developed by `Eemil S. (Esinko#7976)` at `Testausserveri ry` and <br>
+completed on the `31st` of `December 2021`.
+<br>
 However, contributions are more than welcome.
 
 ## Enhancements
@@ -36,7 +38,7 @@ src
 ```
 
 ### Installation/Deployment
-As mentioned above, this project uses Docker and Docker-compose for deployment and testing.
+As mentioned above, this project uses Docker and Docker-compose for deployment and development.
 No other dependencies are required.
 <br>
 After you have configured the required environment variables (see `.env.example`) you can launch the project with:
@@ -47,7 +49,7 @@ And that's it!
 
 ### Running from source without using Docker
 If you want to run the project from source, install `Node.Js 16.13.0` or later and install project dependencies with `npm install`.
-Then just run `npm start`. Remember you need to run and configure a standalone MongoDB instance or use MongoDB Atlas, normally docker-compose does this for you.
+Then just run `npm start`. Remember, you need to run and configure a standalone MongoDB instance or use MongoDB Atlas, normally docker-compose does this for you.
 
 # Contributing 
 Contributions are more than welcome. If you want to contribute, clone this repository and after you've done your magic make a new pull request.
