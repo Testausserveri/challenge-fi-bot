@@ -58,7 +58,7 @@ While making commits, use *conventional commits*, as we do in this project (lear
 <br>
 All pull requests require manual review. Mention @Esinko or other repository maintainers if you see no activity for a few days.
 <br>
-To make this project faster, make sure you follow *code style* requirements. We use ESLint to maintain *code style* and the quality of the codebase.
+To make this process faster, make sure you follow *code style* requirements. We use ESLint to maintain *code style* and the quality of the codebase.
 Before making your contributions it is recommended you install it and before making a pull request you can validate your code by running `eslint ./`.
 More information on how to use ESlint can be found below, but using Visual Studio Code with the ESLint extension is recommended.
 Warnings from ESLint can be ignored, but you should consider them as signs of messy code.
