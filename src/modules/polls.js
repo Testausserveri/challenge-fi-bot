@@ -13,7 +13,6 @@ const {
 const request = require("../utils/request")
 const findMessage = require("../utils/find_message")
 const checkForAccess = require("../utils/check_for_access")
-const thinking = require("../utils/thinking")
 
 /**
  * Convert a number into an emoji. The world that we live in nowadays... :p
@@ -136,7 +135,9 @@ module.exports = async (interaction, next) => {
     if (interaction.isButton()) {
         // Handle button click
         const option = interaction.customId
-        await thinking(interaction)
+        await interaction.deferReply({
+            ephemeral: true
+        })
         const poll = await global.schemas.PollModel.findOne({ message: interaction.message.id, id: interaction.guild.id }).exec()
         if (poll === null) {
             // This is not a poll button click
@@ -157,7 +158,7 @@ module.exports = async (interaction, next) => {
             content: `✅ Your vote for \`${option}\` was confirmed. ${lastVote}`,
             ephemeral: true
         })
-    } else {
+    } else if (interaction.isCommand()) {
         // Handle slash command
         // eslint-disable-next-line no-lonely-if
         if (interaction.commandName === "poll") {
@@ -171,15 +172,17 @@ module.exports = async (interaction, next) => {
             }
 
             // Handle application commands
-            if (interaction.options._subcommand === "create") {
+            if (interaction.options.getSubcommand() === "create") {
                 let title; let description; let image; let color; let options; let
                     end = null
                 const votesTemplate = {}
-                await thinking(interaction)
+                await interaction.deferReply({
+                    ephemeral: true
+                })
                 // Get input options
                 // TODO: A better way to do this?
                 // eslint-disable-next-line no-restricted-syntax
-                for await (const option of interaction.options._hoistedOptions) {
+                for await (const option of interaction.options.data) {
                     // eslint-disable-next-line default-case
                     switch (option.name) {
                     case "title": {
@@ -290,9 +293,11 @@ module.exports = async (interaction, next) => {
                         })
                     })
                 }
-            } else if (interaction.options._subcommand === "end") {
-                await thinking(interaction)
-                const messageId = interaction.options._hoistedOptions.filter((option) => option.name === "message_id")[0].value
+            } else if (interaction.options.getSubcommand() === "end") {
+                await interaction.deferReply({
+                    ephemeral: true
+                })
+                const messageId = interaction.options.get("message_id")?.value
                 const poll = await global.schemas.PollModel.findOne({ id: interaction.guild.id, message: messageId }).exec()
                 if (poll !== null) {
                     const message = await findMessage(messageId, interaction.guild)
@@ -312,5 +317,7 @@ module.exports = async (interaction, next) => {
         } else {
             next()
         }
+    } else {
+        next()
     }
 }

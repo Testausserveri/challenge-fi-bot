@@ -14,7 +14,6 @@ const {
 const request = require("../utils/request")
 const checkForAccess = require("../utils/check_for_access")
 const findMessage = require("../utils/find_message")
-const thinking = require("../utils/thinking")
 
 /**
  * Create a role selection embed
@@ -94,7 +93,7 @@ module.exports = async (interaction, next) => {
                 ephemeral: true
             })
         }
-    } else {
+    } else if (interaction.isCommand()) {
         // Handle slash command
         // eslint-disable-next-line no-lonely-if
         if (interaction.commandName === "role-selection") {
@@ -108,11 +107,13 @@ module.exports = async (interaction, next) => {
             }
 
             // Handle application commands
-            if (interaction.options._subcommand === "create") {
-                await thinking(interaction)
+            if (interaction.options.getSubcommand() === "create") {
+                await interaction.deferReply({
+                    ephemeral: true
+                })
                 let title; let description; let footer; let image; let
                     color = null
-                for await (const option of interaction.options._hoistedOptions) {
+                for await (const option of interaction.options.data) {
                     // eslint-disable-next-line default-case
                     switch (option.name) {
                     case "title": {
@@ -198,11 +199,13 @@ module.exports = async (interaction, next) => {
                         })
                     }
                 }
-            } else if (interaction.options._subcommand === "add-option") {
-                await thinking(interaction)
-                const messageId = interaction.options._hoistedOptions.filter((option) => option.name === "message_id")[0].value
-                const text = interaction.options._hoistedOptions.filter((option) => option.name === "button_text")[0].value
-                const roleId = interaction.options._hoistedOptions.filter((option) => option.name === "role_id")[0].value
+            } else if (interaction.options.getSubcommand() === "add-option") {
+                await interaction.deferReply({
+                    ephemeral: true
+                })
+                const messageId = interaction.options.get("message_id")?.value
+                const text = interaction.options.get("button_text")?.value
+                const roleId = interaction.options.get("role_id")?.value
                 const roleSelection = await global.schemas.RoleSelectionModel.findOne({ message: messageId, id: interaction.guild.id }).exec()
                 if (roleSelection === null) {
                     interaction.followUp({
@@ -258,9 +261,11 @@ module.exports = async (interaction, next) => {
                         ephemeral: true
                     })
                 }
-            } else if (interaction.options._subcommand === "remove-option") {
-                await thinking(interaction)
-                const roleId = interaction.options._hoistedOptions.filter((option) => option.name === "role_id")[0].value
+            } else if (interaction.options.getSubcommand() === "remove-option") {
+                await interaction.deferReply({
+                    ephemeral: true
+                })
+                const roleId = interaction.options.get("role_id").value
                 const roleSelection = await global.schemas.RoleSelectionModel.findOne({ id: interaction.guild.id }).exec()
                 if (roleSelection === null) {
                     interaction.followUp({
@@ -316,9 +321,11 @@ module.exports = async (interaction, next) => {
                         ephemeral: true
                     })
                 }
-            } else if (interaction.options._subcommand === "remove") {
-                await thinking(interaction)
-                const messageId = interaction.options._hoistedOptions.filter((option) => option.name === "message_id")[0].value
+            } else if (interaction.options.getSubcommand() === "remove") {
+                await interaction.deferReply({
+                    ephemeral: true
+                })
+                const messageId = interaction.options.get("message_id").value
                 const roleSelection = await global.schemas.RoleSelectionModel.findOne({ message: messageId, id: interaction.guild.id }).exec()
                 if (roleSelection !== null) {
                     await global.schemas.RoleSelectionModel.findOneAndRemove({ message: messageId, id: interaction.guild.id }).exec()
@@ -338,5 +345,7 @@ module.exports = async (interaction, next) => {
         } else {
             next()
         }
+    } else {
+        next()
     }
 }

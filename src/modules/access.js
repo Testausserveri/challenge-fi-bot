@@ -1,6 +1,5 @@
 // eslint-disable-next-line no-unused-vars
 const { Interaction } = require("discord.js")
-const thinking = require("../utils/thinking")
 const slashCommands = require("../configuration/slash_commands")
 
 /**
@@ -9,10 +8,12 @@ const slashCommands = require("../configuration/slash_commands")
  * @param {Function} next If we will move on to the next handler
  */
 module.exports = async (interaction, next) => {
-    if (interaction.commandName === "configure-access") {
-        await thinking(interaction)
+    if (interaction.isCommand() && interaction.commandName === "configure-access") {
+        await interaction.deferReply({
+            ephemeral: true
+        })
         if (interaction.member.permissions.has("ADMINISTRATOR")) {
-            const roleId = interaction.options._hoistedOptions[0]?.value
+            const roleId = interaction.options.get("role-id")?.value
             if (roleId !== null && interaction.guild.roles.cache.has(roleId)) {
                 await global.schemas.ServerAccessModel.findOneAndUpdate(
                     { id: interaction.guild.id },

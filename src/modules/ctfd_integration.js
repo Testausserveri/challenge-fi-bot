@@ -7,7 +7,6 @@ const {
 } = require("discord.js")
 const request = require("../utils/request")
 const checkForAccess = require("../utils/check_for_access")
-const thinking = require("../utils/thinking")
 const getNumberEnding = require("../utils/get_number_ending")
 
 // Poll based notification & leaderboard state change listener
@@ -179,7 +178,7 @@ setInterval(async () => {
  * @param {Function} next If we will move on to the next handler
  */
 module.exports = async (interaction, next) => {
-    if (interaction.commandName === "ctfd") {
+    if (interaction.isCommand() && interaction.commandName === "ctfd") {
         // Check for access
         if (!checkForAccess(interaction)) {
             interaction.reply({
@@ -189,14 +188,16 @@ module.exports = async (interaction, next) => {
             return
         }
 
-        if (interaction.options._subcommand === "configure-api") {
+        if (interaction.options.getSubcommand() === "configure-api") {
             // Configure the integration
-            let apiUrl = interaction.options._hoistedOptions.filter((option) => option.name === "api-host")[0]?.value
+            let apiUrl = interaction.options.get("api-host")?.value
             // Make sure we have a valid URL if the user forgot to put this stuff in
             if (!apiUrl.startsWith("https")) apiUrl = `https://${apiUrl}`
             if (!apiUrl.endsWith("/")) apiUrl += "/"
-            const apiToken = interaction.options._hoistedOptions.filter((option) => option.name === "api-token")[0]?.value
-            await thinking(interaction)
+            const apiToken = interaction.options.get("api-token")?.value
+            await interaction.deferReply({
+                ephemeral: true
+            })
             // Test with /api/v1/swagger.json, expect status 200 with content-length 68160
             try {
                 const url = new URL(apiUrl)
@@ -292,9 +293,11 @@ module.exports = async (interaction, next) => {
                     })
                 }
             }
-        } else if (interaction.options._subcommand === "configure-chall-notifications") {
-            await thinking(interaction)
-            const channelId = interaction.options._hoistedOptions.filter((option) => option.name === "channel-id")[0]?.value
+        } else if (interaction.options.getSubcommand() === "configure-chall-notifications") {
+            await interaction.deferReply({
+                ephemeral: true
+            })
+            const channelId = interaction.options.get("channel-id")?.value
             const integration = await global.schemas.CTFdIntegrationModel.findOne({ id: interaction.guild.id }).exec()
             if (channelId === undefined) {
                 if (integration.challengeNotifications !== "") {
@@ -346,9 +349,11 @@ module.exports = async (interaction, next) => {
                     ephemeral: true
                 })
             }
-        } else if (interaction.options._subcommand === "configure-solve-notifications") {
-            await thinking(interaction)
-            const channelId = interaction.options._hoistedOptions.filter((option) => option.name === "channel-id")[0]?.value
+        } else if (interaction.options.getSubcommand() === "configure-solve-notifications") {
+            await interaction.deferReply({
+                ephemeral: true
+            })
+            const channelId = interaction.options.get("channel-id")?.value
             const integration = await global.schemas.CTFdIntegrationModel.findOne({ id: interaction.guild.id }).exec()
             if (channelId === undefined) {
                 if (integration.solveNotifications !== "") {

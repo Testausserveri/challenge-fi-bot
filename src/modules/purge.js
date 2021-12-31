@@ -3,7 +3,6 @@
 // eslint-disable-next-line no-unused-vars
 const { Interaction } = require("discord.js")
 const checkForAccess = require("../utils/check_for_access")
-const thinking = require("../utils/thinking")
 
 /**
  * Purge messages from a channel
@@ -11,7 +10,7 @@ const thinking = require("../utils/thinking")
  * @param {Function} next If we will move on to the next handler
  */
 module.exports = async (interaction, next) => {
-    if (interaction.commandName === "purge") {
+    if (interaction.isCommand() && interaction.commandName === "purge") {
         // Check for access
         if (!checkForAccess(interaction)) {
             interaction.reply({
@@ -23,10 +22,12 @@ module.exports = async (interaction, next) => {
 
         // The 500 messages at once maximum is not required,
         // but a measure to avoid API rate limiting
-        const messageDeleteCount = parseInt(interaction.options._hoistedOptions.filter((option) => option.name === "count")[0].value, 10)
-        const userId = interaction.options._hoistedOptions.filter((option) => option.name === "user-id")[0]?.value
+        const messageDeleteCount = parseInt(interaction.options.get("count").value, 10)
+        const userId = interaction.options.get("user-id").value
         if (messageDeleteCount < 500) {
-            await thinking(interaction)
+            await interaction.deferReply({
+                ephemeral: true
+            })
             // TODO: Resolve all messages, then delete them
             const messagesToDelete = []
             const remove = async (count) => {

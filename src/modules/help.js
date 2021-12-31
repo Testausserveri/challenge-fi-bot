@@ -5,7 +5,6 @@ const {
     MessageActionRow,
     MessageButton
 } = require("discord.js")
-const thinking = require("../utils/thinking")
 
 /**
  * Some module
@@ -13,10 +12,12 @@ const thinking = require("../utils/thinking")
  * @param {Function} next If we will move on to the next handler
  */
 module.exports = async (interaction, next) => {
-    if (interaction.commandName === "help") {
-        await thinking(interaction)
-        if (interaction.options._hoistedOptions?.length > 0) {
-            const command = interaction.options._hoistedOptions[0].value
+    if (interaction.isCommand() && interaction.commandName === "help") {
+        await interaction.deferReply({
+            ephemeral: true
+        })
+        if (interaction.options.get("command-name") !== null) {
+            const command = interaction.options.get("command-name").value
             switch (command) {
             case "configure-access": {
                 const embed = new MessageEmbed()
