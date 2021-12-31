@@ -1,0 +1,25 @@
+version: '3'
+services:
+  bot:
+    tty: true
+    links:
+      - mongo
+    depends_on:
+      - mongo
+    environment:
+      - DATABASE_URL=mongodb://mongo:27017
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      network: host
+  mongo:
+    image: mongo
+    restart: unless-stopped
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb:/data/db
+    logging:
+      driver: none
+volumes:
+ mongodb:
