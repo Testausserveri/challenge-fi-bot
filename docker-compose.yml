@@ -2,6 +2,7 @@ version: '3'
 services:
   bot:
     tty: true
+    restart: unless-stopped
     links:
       - mongo
     depends_on:
