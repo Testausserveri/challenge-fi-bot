@@ -21,7 +21,7 @@ module.exports = {
         quotes: ["error", "double"],
         "comma-dangle": ["error", "never"],
         semi: ["error", "never"],
-        "no-underscore-dangle": ["error", { allow: ["_hoistedOptions", "_subcommand"] }],
+        "no-underscore-dangle": ["error", { allow: [] }],
         "no-param-reassign": ["error", { props: false }],
         "no-console": ["error", { allow: ["warn", "log", "error", "debug"] }],
         "operator-linebreak": ["error", "after"],
