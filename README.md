@@ -49,7 +49,7 @@ And that's it!
 If you want to run the project from source, install `Node.Js 16.13.0` or later and install project dependencies with `npm install`.
 Then just run `npm start`. Remember you need to run and configure a standalone MongoDB instance or use MongoDB Atlas, normally docker-compose does this for you.
 
-# Contribution 
+# Contributing 
 Contributions are more than welcome. If you want to contribute, clone this repository and after you've done your magic make a new pull request.
 <br>
 While making commits, use *conventional commits*, as we do in this project (learn more below).
