@@ -1,3 +1,5 @@
+// eslint-disable-next-line no-unused-vars
+const { Message } = require("discord.js")
 /**
  * Find a message from a guild
  * @param {String} id

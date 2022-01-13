@@ -308,5 +308,12 @@ module.exports = [
                 type: 3
             }
         ]
+    },
+    // Info message
+    {
+        name: "info",
+        description: "Get the active bot configuration.",
+        type: 1,
+        options: []
     }
 ]

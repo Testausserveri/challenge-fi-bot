@@ -182,7 +182,7 @@ module.exports = async (interaction, next) => {
                 // Get input options
                 // TODO: A better way to do this?
                 // eslint-disable-next-line no-restricted-syntax
-                for await (const option of interaction.options.data) {
+                for await (const option of interaction.options.data[0].options) {
                     // eslint-disable-next-line default-case
                     switch (option.name) {
                     case "title": {
@@ -244,9 +244,8 @@ module.exports = async (interaction, next) => {
                         break
                     }
                     case "options": {
-                        let optionsArray = option.value.split(";").sort()
+                        const optionsArray = option.value.split(";")
                         if (optionsArray[0] === "") optionsArray.splice(0, 1) // Remove ghost option (dunno why this appears, but this fixes that)
-                        optionsArray = optionsArray.reverse()
                         options = {}
                         // eslint-disable-next-line no-plusplus
                         for (let i = 0; i < optionsArray.length; i++) {
@@ -263,6 +262,7 @@ module.exports = async (interaction, next) => {
                         ephemeral: true
                     })
                 } else {
+                    console.log(title, description, image, color, options, end)
                     const msg = await createPoll(title, description, image, color, options, end, interaction.channel)
                     global.schemas.PollModel.findOneAndUpdate(
                         { id: interaction.guild.id, message: msg.id },

@@ -168,6 +168,19 @@ module.exports = async (interaction, next) => {
                 })
                 break
             }
+            case "info": {
+                const embed = new MessageEmbed()
+                    .setAuthor("Configuration inspection utility")
+                    .setTitle("/info")
+                    .setDescription("Get the active bot configuration.")
+                    .addField("Parameters", "*none*")
+                    .setColor("#667bc4")
+                interaction.followUp({
+                    embeds: [embed],
+                    ephemeral: true
+                })
+                break
+            }
             default: {
                 interaction.followUp({
                     content: "Unknown command.",
@@ -180,7 +193,7 @@ module.exports = async (interaction, next) => {
             const embed = new MessageEmbed()
                 .setTitle("Help & FAQ")
                 .setDescription("What you can do with this bot application and some frequently asked questions about it!")
-                .addField("Commands", "```/configure-access\n/poll\n/ctfd\n/purge\n/role-selection```", true)
+                .addField("Commands", "```/configure-access\n/poll\n/ctfd\n/purge\n/role-selection\n/info```", true)
                 .addField("Required permissions", "- `Manage roles`\n- `Send messages`\n- `Application commands`", true)
                 .addField("Core features", "This bot implements a CTFd integration (via `/ctfd`) with notifications about new challenges and solves along with some neat community management tools.")
                 .addField("How to use", "You can always check this message again with `/help` and learn more about specific commands by using `/help <command>`.")
