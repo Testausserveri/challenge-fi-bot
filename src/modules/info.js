@@ -28,6 +28,7 @@ module.exports = async (interaction, next) => {
             .setAuthor("Server configuration")
             .setTitle(interaction.guild.name)
             .setColor("#667bc4")
+            .setThumbnail(interaction.guild.iconURL())
             .addField("Role selection", `
                 Message: ${roleSelection !== null ? (await findMessage(roleSelection.message, interaction.guild)).url : "none"}
             `)
