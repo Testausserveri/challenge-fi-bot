@@ -34,8 +34,8 @@ module.exports = async (interaction, next) => {
                 Message: ${roleSelection !== null ? (await findMessage(roleSelection.message, interaction.guild)).url : "none"}
             `)
             .addField("CTFd integration", `
-                CTFd API URL: ${ctfdIntegration.apiUrl ?? "none"}
-                CTFd API Token SHA256 hash: ${ctfdIntegration.apiToken !== null ? createHash("sha256").update(ctfdIntegration.apiToken).digest("hex") : "none"}
+                CTFd API URL: \`${ctfdIntegration.apiUrl ?? "none"}\`
+                CTFd API Token SHA256 hash: \`${ctfdIntegration.apiToken !== null ? createHash("sha256").update(ctfdIntegration.apiToken).digest("hex") : "none"}\`
                 CTFd challenge notification channel: <#${ctfdIntegration.challengeNotifications ?? "none"}>
                 CTFd solve notification channel: <#${ctfdIntegration.solveNotifications ?? "none"}>
             `)
