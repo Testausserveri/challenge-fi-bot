@@ -2,6 +2,7 @@
 const { Interaction, MessageEmbed } = require("discord.js")
 const findMessage = require("../utils/find_message")
 const checkForAccess = require("../utils/check_for_access")
+const { createHash } = require("crypto")
 
 /**
  * Some module
@@ -34,6 +35,7 @@ module.exports = async (interaction, next) => {
             `)
             .addField("CTFd integration", `
                 CTFd API URL: ${ctfdIntegration.apiUrl ?? "none"}
+                CTFd API Token SHA256 hash: ${ctfdIntegration.token ?? createHash("sha256").update(ctfdIntegration.token).digest("hex")}
                 CTFd challenge notification channel: <#${ctfdIntegration.challengeNotifications ?? "none"}>
                 CTFd solve notification channel: <#${ctfdIntegration.solveNotifications ?? "none"}>
             `)
