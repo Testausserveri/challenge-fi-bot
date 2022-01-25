@@ -48,7 +48,7 @@ setInterval(async () => {
                                     new MessageActionRow().addComponents(new MessageButton({
                                         style: "LINK",
                                         url: `${document.apiUrl}challenges#${encodeURIComponent(newChallenge.name)}-${newChallenge.id}`,
-                                        label: "Open challenge"
+                                        label: "View challenge"
                                     }))
                                 embed.setTitle("New challenge!")
                                 embed.setColor("PURPLE")
@@ -334,7 +334,7 @@ module.exports = async (interaction, next) => {
                     title: "Info",
                     description: "New challenge -notifications will now be sent to this channel.",
                     footer: {
-                        text: "You may ignore this message."
+                        text: "This is a test. You may ignore this message."
                     }
                 })
                 await channel.send({ embeds: [embed] })
