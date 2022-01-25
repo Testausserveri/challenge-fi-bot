@@ -29,7 +29,7 @@ module.exports = async (interaction, next) => {
             .setTitle(interaction.guild.name)
             .setColor("#667bc4")
             .addField("Role selection", `
-                Message: ${roleSelection !== undefined ? (await findMessage(roleSelection.message, interaction.guild)).url : "none"}
+                Message: ${roleSelection !== null ? (await findMessage(roleSelection.message, interaction.guild)).url : "none"}
             `)
             .addField("CTFd integration", `
                 CTFd API URL: ${ctfdIntegration.apiUrl ?? "none"}
