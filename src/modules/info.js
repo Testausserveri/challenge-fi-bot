@@ -35,7 +35,7 @@ module.exports = async (interaction, next) => {
             `)
             .addField("CTFd integration", `
                 CTFd API URL: ${ctfdIntegration.apiUrl ?? "none"}
-                CTFd API Token SHA256 hash: ${ctfdIntegration.token ?? createHash("sha256").update(ctfdIntegration.token).digest("hex")}
+                CTFd API Token SHA256 hash: ${ctfdIntegration.apiToken !== null ? createHash("sha256").update(ctfdIntegration.token).digest("hex") : "none"}
                 CTFd challenge notification channel: <#${ctfdIntegration.challengeNotifications ?? "none"}>
                 CTFd solve notification channel: <#${ctfdIntegration.solveNotifications ?? "none"}>
             `)
