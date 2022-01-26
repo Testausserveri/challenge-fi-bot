@@ -32,10 +32,10 @@ module.exports = async (interaction, next) => {
             .setColor("#667bc4")
             .setThumbnail(interaction.guild.iconURL())
             .addField("Role selection(s)", `
-                Messages: ${roleSelection.length !== 0 ? roleSelection.map(async (document) => (await findMessage(document.message, interaction.guild))?.url ?? "invalid-message") : "none"}
+                Messages: ${roleSelection.length !== 0 ? await Promise.all(roleSelection.map(async (document) => (await findMessage(document.message, interaction.guild))?.url ?? "invalid-message")) : "none"}
             `)
             .addField("Poll(s)", `
-                Messages: ${polls.length !== 0 ? polls.map(async (document) => (await findMessage(document.message, interaction.guild))?.url ?? "invalid-message") : "none"}
+                Messages: ${polls.length !== 0 ? await Promise.all(polls.map(async (document) => (await findMessage(document.message, interaction.guild))?.url ?? "invalid-message")) : "none"}
             `)
             .addField("CTFd integration", `
                 CTFd API URL: \`${ctfdIntegration.apiUrl ?? "none"}\`
