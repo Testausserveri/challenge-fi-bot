@@ -7,11 +7,11 @@ const { Interaction } = require("discord.js")
  * @returns {Boolean}
  */
 module.exports = async (interaction) => {
-    if (!interaction.member.permissions.has("ADMINISTRATOR")) {
-        const access = await global.schemas.ServerAccessModel.findOne({ id: interaction.guild.id }).exec()
-        if (access !== null) {
-            if (!interaction.member.roles.cache.has(access.role)) return false
-        } else return false
+    if (interaction.member.permissions.has("ADMINISTRATOR")) return true
+    const access = await global.schemas.ServerAccessModel.findOne({ id: interaction.guild.id }).exec()
+    if (access !== null) {
+        if (interaction.member.roles.cache.has(access.role)) return true
+        return false
     }
-    return true
+    return false
 }
