@@ -229,6 +229,7 @@ module.exports = async (interaction, next) => {
                         }
                         // Update the database
                         console.debug("ROLES", roleSelection)
+                        if (roleSelection.roles === undefined) roleSelection.roles = {}
                         roleSelection.roles[roleId] = text
                         global.schemas.RoleSelectionModel.findOneAndUpdate(
                             { id: interaction.guild.id },
