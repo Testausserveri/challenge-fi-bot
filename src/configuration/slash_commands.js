@@ -108,7 +108,7 @@ module.exports = [
     // Configure accesses
     {
         name: "configure-access",
-        description: "Set a role with command execution command execution privileges.",
+        description: "Set a role with command execution privileges.",
         type: 1,
         options: [
             {
