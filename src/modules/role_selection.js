@@ -161,11 +161,11 @@ module.exports = async (interaction, next) => {
                     })
                 } else {
                     // Add database entry
-                    const previousSelection = await global.schemas.RoleSelectionModel.findOne({ id: interaction.guild.id }).exec()
-                    if (previousSelection !== null) {
+                    const numberOfSelections = (await global.schemas.RoleSelectionModel.find({ id: interaction.guild.id }).exec()).length
+                    if (numberOfSelections >= 5) {
                         // This limit can be easily removed, just set some other max number
                         interaction.followUp({
-                            content: "For now there can only be one role selection for each server.",
+                            content: "For now there can only be `5` role selections per server.",
                             ephemeral: true
                         })
                     } else {
