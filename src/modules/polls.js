@@ -42,13 +42,14 @@ function numberToEmoji(number, asObject) {
  * @param {Object} list The button configuration
  * @returns {MessageActionRow[]}
  */
-function generateButtonComponents(list) {
+function generateButtonComponents(list, replaceLabel) {
     const components = []
     // eslint-disable-next-line no-restricted-syntax
     for (const key of Object.keys(list)) {
         components.push(new MessageButton()
             .setStyle("PRIMARY")
-            .setLabel(list[key])
+            .setLabel(replaceLabel ?? list[key])
+            .setEmoji(numberToEmoji(key).replace(/:/g, ""))
             .setCustomId(key))
     }
     const actionRows = [new MessageActionRow()]
@@ -63,7 +64,6 @@ function generateButtonComponents(list) {
     }
     return actionRows
 }
-
 
 /**
  * Create a poll embed
