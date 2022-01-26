@@ -7,7 +7,6 @@ const { Message } = require("discord.js")
  * @returns {Message}
  */
 module.exports = async (id, guild) => {
-    console.debug("FIND", id, guild)
     const channels = (await guild.channels.fetch()).filter((c) => ["GUILD_TEXT", "GUILD_NEWS"].includes(c.type))
     // eslint-disable-next-line no-restricted-syntax
     for await (const channel of channels) {
