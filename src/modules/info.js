@@ -21,7 +21,8 @@ module.exports = async (interaction, next) => {
         await interaction.deferReply({
             ephemeral: true
         })
-        const roleSelection = await global.schemas.RoleSelectionModel.findOne({ id: interaction.guild.id }).exec()
+        const roleSelection = await global.schemas.RoleSelectionModel.find({ id: interaction.guild.id }).exec()
+        const polls = await global.schemas.PollModel.find({ id: interaction.guild.id }).exec()
         let ctfdIntegration = await global.schemas.CTFdIntegrationModel.findOne({ id: interaction.guild.id }).exec()
         if (ctfdIntegration === null) ctfdIntegration = {}
 
@@ -30,8 +31,11 @@ module.exports = async (interaction, next) => {
             .setTitle(interaction.guild.name)
             .setColor("#667bc4")
             .setThumbnail(interaction.guild.iconURL())
-            .addField("Role selection", `
-                Message: ${roleSelection !== null ? (await findMessage(roleSelection.message, interaction.guild)).url : "none"}
+            .addField("Role selection(s)", `
+                Messages: ${roleSelection.length !== 0 ? roleSelection.map(async (document) => (await findMessage(document.message, interaction.guild))?.url ?? "invalid-message") : "none"}
+            `)
+            .addField("Poll(s)", `
+                Messages: ${polls.length !== 0 ? polls.map(async (document) => (await findMessage(document.message, interaction.guild))?.url ?? "invalid-message") : "none"}
             `)
             .addField("CTFd integration", `
                 CTFd API URL: \`${ctfdIntegration.apiUrl ?? "none"}\`
