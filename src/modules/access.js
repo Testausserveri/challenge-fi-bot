@@ -13,7 +13,7 @@ module.exports = async (interaction, next) => {
             ephemeral: true
         })
         if (interaction.member.permissions.has("ADMINISTRATOR")) {
-            const roleId = interaction.options.get("role-id")?.value
+            const roleId = interaction.options.get("role_id")?.value
             const role = await interaction.guild.roles.fetch(roleId)
             if (roleId !== null && role !== null) {
                 await global.schemas.ServerAccessModel.findOneAndUpdate(
