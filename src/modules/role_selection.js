@@ -92,13 +92,13 @@ module.exports = async (interaction, next) => {
                 await interaction.member.roles.add(roleId)
                 msg = "added to"
             }
-            if (!interaction.replied) await interaction.deferReply({ ephemeral: true })
+            if (interaction.replied === false) await interaction.deferReply({ ephemeral: true })
             interaction.followUp({
                 content: `✅ Role \`${role.name}\` ${msg} your account.`,
                 ephemeral: true
             })
         } catch (e) {
-            if (!interaction.replied) await interaction.deferReply({ ephemeral: true })
+            if (interaction.replied === false) await interaction.deferReply({ ephemeral: true })
             interaction.followUp({
                 content: "An error occurred :(",
                 ephemeral: true
