@@ -135,15 +135,13 @@ module.exports = async (interaction, next) => {
     if (interaction.isButton()) {
         // Handle button click
         const option = interaction.customId
-        await interaction.deferReply({
-            ephemeral: true
-        })
         const poll = await global.schemas.PollModel.findOne({ message: interaction.message.id, id: interaction.guild.id }).exec()
         if (poll === null) {
             // This is not a poll button click
             next()
             return
         }
+        if (!interaction.replied) await interaction.deferReply({ ephemeral: true })
         const votedBefore = Object.keys(poll.votes).filter((baseOption) => poll.votes[baseOption].includes(interaction.user.id))
         let lastVote = ""
         if (votedBefore.length !== 0) {
