@@ -231,9 +231,11 @@ module.exports = async (interaction, next) => {
                         if (roleSelection.roles === undefined) roleSelection.roles = {}
                         roleSelection.roles[roleId] = text
                         console.debug("ROLES", roleSelection)
-                        global.schemas.RoleSelectionModel.findOneAndUpdate(
+                        global.schemas.RoleSelectionModel.updateOne(
                             { id: interaction.guild.id },
-                            roleSelection
+                            {
+                                $set: { roles: roleSelection.roles }
+                            }
                         ).exec().then(() => {
                             // Edit the message
                             const components = new MessageActionRow()
