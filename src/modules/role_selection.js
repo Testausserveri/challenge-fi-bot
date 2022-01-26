@@ -244,7 +244,7 @@ module.exports = async (interaction, next) => {
                                 content: "Option added.",
                                 ephemeral: true
                             })
-                        }).catch((e) => {
+                        }).catch(() => {
                             interaction.followUp({
                                 content: "Failed.",
                                 ephemeral: true
