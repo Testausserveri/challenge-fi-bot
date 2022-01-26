@@ -1,8 +1,8 @@
 // eslint-disable-next-line no-unused-vars
 const { Interaction, MessageEmbed } = require("discord.js")
+const { createHash } = require("crypto")
 const findMessage = require("../utils/find_message")
 const checkForAccess = require("../utils/check_for_access")
-const { createHash } = require("crypto")
 
 /**
  * Some module
@@ -35,7 +35,7 @@ module.exports = async (interaction, next) => {
             `)
             .addField("CTFd integration", `
                 CTFd API URL: \`${ctfdIntegration.apiUrl ?? "none"}\`
-                CTFd API Token SHA256 hash: \`${ctfdIntegration.apiToken !== null ? createHash("sha256").update(ctfdIntegration.apiToken).digest("hex") : "none"}\`
+                CTFd API Token SHA256 hash: \`${ctfdIntegration.apiToken !== null && ctfdIntegration.apiToken !== undefined ? createHash("sha256").update(ctfdIntegration.apiToken).digest("hex") : "none"}\`
                 CTFd challenge notification channel: <#${ctfdIntegration.challengeNotifications ?? "none"}>
                 CTFd solve notification channel: <#${ctfdIntegration.solveNotifications ?? "none"}>
             `)
