@@ -208,7 +208,6 @@ module.exports = async (interaction, next) => {
                 const text = interaction.options.get("button_text")?.value
                 const roleId = interaction.options.get("role_id")?.value
                 const roleSelection = await global.schemas.RoleSelectionModel.findOne({ message: messageId, id: interaction.guild.id }).exec()
-                console.debug("INITIAL", roleSelection)
                 if (roleSelection === null) {
                     interaction.followUp({
                         content: "No such role selection exists for this server.",
@@ -231,9 +230,8 @@ module.exports = async (interaction, next) => {
                         // Update the database
                         if (roleSelection.roles === undefined) roleSelection.roles = {}
                         roleSelection.roles[roleId] = text
-                        console.debug("ROLES", roleSelection)
                         global.schemas.RoleSelectionModel.updateOne(
-                            { id: interaction.guild.id },
+                            { message: messageId, id: interaction.guild.id },
                             {
                                 $set: { roles: roleSelection.roles }
                             }
@@ -247,7 +245,6 @@ module.exports = async (interaction, next) => {
                                 ephemeral: true
                             })
                         }).catch((e) => {
-                            console.error(e)
                             interaction.followUp({
                                 content: "Failed.",
                                 ephemeral: true
