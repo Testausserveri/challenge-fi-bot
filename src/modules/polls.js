@@ -39,17 +39,31 @@ function numberToEmoji(number, asObject) {
 
 /**
  * Generate button components from a list
- * @param {Object} list Button configuration list
- * @param {*} replaceLabel Replace the label of every button with this
- * @returns {MessageButton[]}
+ * @param {Object} list The button configuration
+ * @returns {MessageActionRow[]}
  */
-function generateButtonComponents(list, replaceLabel) {
-    return Object.keys(list).map((key) => new MessageButton()
-        .setStyle("SECONDARY")
-        .setLabel(replaceLabel ?? list[key])
-        .setEmoji(numberToEmoji(key).replace(/:/g, ""))
-        .setCustomId(key))
+function generateButtonComponents(list) {
+    const components = []
+    // eslint-disable-next-line no-restricted-syntax
+    for (const key of Object.keys(list)) {
+        components.push(new MessageButton()
+            .setStyle("PRIMARY")
+            .setLabel(list[key])
+            .setCustomId(key))
+    }
+    const actionRows = [new MessageActionRow()]
+    // eslint-disable-next-line no-restricted-syntax
+    for (const component of components) {
+        let currentRow = actionRows[actionRows.length - 1]
+        if (currentRow.components.length >= 5) {
+            actionRows.push(new MessageActionRow())
+            currentRow = actionRows[actionRows.length - 1]
+        }
+        currentRow.addComponents(component)
+    }
+    return actionRows
 }
+
 
 /**
  * Create a poll embed
@@ -75,8 +89,7 @@ async function createPoll(title, description, image, color, options, end, channe
     embed.setFooter("This poll will end")
     embed.setTimestamp(endDate)
     embed.setAuthor("Poll")
-    const buttons = new MessageActionRow().addComponents(...generateButtonComponents(options, "0"))
-    const msg = await channel.send({ embeds: [embed], components: [buttons], files: thumbnailAttachment !== null ? [thumbnailAttachment] : undefined })
+    const msg = await channel.send({ embeds: [embed], components: generateButtonComponents(options, "0"), files: thumbnailAttachment !== null ? [thumbnailAttachment] : undefined })
     return msg
 }
 
@@ -117,11 +130,10 @@ setInterval(async () => {
             return
         }
         const buttonData = Object.fromEntries(Object.keys(document.votes).map((key) => [key, document.votes[key].length.toString()]))
-        const buttons = new MessageActionRow().addComponents(...generateButtonComponents(buttonData))
         // Update message vote counts
         const oldValue = Object.fromEntries(message.components[0].components.map((button) => [button.customId, button.label]))
         if (buttonData !== oldValue) {
-            message.edit({ components: [buttons] })
+            message.edit({ components: generateButtonComponents(buttonData) })
         }
     }
 }, global.discordPollUpdatedInterval)
@@ -260,7 +272,6 @@ module.exports = async (interaction, next) => {
                         ephemeral: true
                     })
                 } else {
-                    console.log(title, description, image, color, options, end)
                     const msg = await createPoll(title, description, image, color, options, end, interaction.channel)
                     global.schemas.PollModel.findOneAndUpdate(
                         { id: interaction.guild.id, message: msg.id },
@@ -297,6 +308,7 @@ module.exports = async (interaction, next) => {
                 })
                 const messageId = interaction.options.get("message_id")?.value
                 const poll = await global.schemas.PollModel.findOne({ id: interaction.guild.id, message: messageId }).exec()
+                console.log(poll)
                 if (poll !== null) {
                     const message = await findMessage(messageId, interaction.guild)
                     await endPoll(message, poll)
