@@ -88,7 +88,8 @@ module.exports = async (interaction, next) => {
                 ephemeral: true
             })
         } catch (e) {
-            interaction.reply({
+            if (!interaction.replied) await interaction.deferReply({ ephemeral: true })
+            interaction.followUp({
                 content: "An error occurred :(",
                 ephemeral: true
             })
