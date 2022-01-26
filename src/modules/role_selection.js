@@ -45,7 +45,7 @@ async function createRoleSelection(title, description, footer, image, color, cha
 /**
  * Generate button components from a list
  * @param {Object} list The button configuration
- * @returns {MessageButton[]}
+ * @returns {MessageActionRow[]}
  */
 function generateButtonComponents(list) {
     const components = []
@@ -55,7 +55,16 @@ function generateButtonComponents(list) {
             .setLabel(list[key])
             .setCustomId(key))
     }
-    return components
+    const actionRows = [new MessageActionRow()]
+    for (const component of components) {
+        let currentRow = actionRows[actionRows.length - 1]
+        if (currentRow.components.length >= 5) {
+            actionRows.push(new MessageActionRow())
+            currentRow = actionRows[actionRows.length - 1]
+        }
+        currentRow.addComponents(component)
+    }
+    return actionRows
 }
 
 /**
@@ -228,7 +237,7 @@ module.exports = async (interaction, next) => {
                             })
                             return
                         }
-                        if (msg.components[0].components.length === 5) {
+                        if (msg.components[0] !== undefined && msg.components[0].components.length >= 15) {
                             interaction.followUp({
                                 content: "Maximum number of buttons reached.",
                                 ephemeral: true
@@ -245,9 +254,7 @@ module.exports = async (interaction, next) => {
                             }
                         ).exec().then(() => {
                             // Edit the message
-                            const components = new MessageActionRow()
-                            components.addComponents(...generateButtonComponents(roleSelection.roles))
-                            msg.edit({ components: [components] })
+                            msg.edit({ components: generateButtonComponents(roleSelection.roles) })
                             interaction.followUp({
                                 content: "Option added.",
                                 ephemeral: true
@@ -304,9 +311,7 @@ module.exports = async (interaction, next) => {
                             }
                         ).exec().then(() => {
                             // Edit the message
-                            const components = new MessageActionRow()
-                            components.addComponents(...generateButtonComponents(roleSelection.roles))
-                            msg.edit({ components: [components] })
+                            msg.edit({ components: generateButtonComponents(roleSelection.roles) })
                             interaction.followUp({
                                 content: "Option removed.",
                                 ephemeral: true
