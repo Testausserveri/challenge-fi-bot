@@ -208,6 +208,7 @@ module.exports = async (interaction, next) => {
                 const text = interaction.options.get("button_text")?.value
                 const roleId = interaction.options.get("role_id")?.value
                 const roleSelection = await global.schemas.RoleSelectionModel.findOne({ message: messageId, id: interaction.guild.id }).exec()
+                console.debug("INITIAL", roleSelection)
                 if (roleSelection === null) {
                     interaction.followUp({
                         content: "No such role selection exists for this server.",
