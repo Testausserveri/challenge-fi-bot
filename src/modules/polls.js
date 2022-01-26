@@ -117,10 +117,12 @@ if (global.discordPollUpdatedInterval < 5000) console.warn("The Discord poll-mes
 setInterval(async () => {
     // eslint-disable-next-line no-restricted-syntax
     for await (const document of global.schemas.PollModel.find()) {
-        const message = await findMessage(document.message, await global.client.guilds.fetch(document.id))
+        console.debug("TICK", document)
+        const message = await findMessage(document.message, (await global.client.guilds.fetch(document.id)))
         if (message === null) {
             // Expired, remove it
             await global.schemas.PollModel.findOneAndRemove({ id: document.id, message: document.message })
+            console.debug("EXPIRED")
             return
         }
         // Do we end the poll?
