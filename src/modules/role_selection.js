@@ -83,7 +83,8 @@ module.exports = async (interaction, next) => {
                 await interaction.member.roles.add(roleId)
                 msg = "added to"
             }
-            interaction.reply({
+            if (!interaction.replied) await interaction.deferReply({ ephemeral: true })
+            interaction.followUp({
                 content: `✅ Role \`${role.name}\` ${msg} your account.`,
                 ephemeral: true
             })
