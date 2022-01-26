@@ -12,7 +12,7 @@ const checkForAccess = require("../utils/check_for_access")
 module.exports = async (interaction, next) => {
     if (interaction.isCommand() && interaction.commandName === "purge") {
         // Check for access
-        if (!checkForAccess(interaction)) {
+        if (!(await checkForAccess(interaction))) {
             interaction.reply({
                 content: "Permission denied.",
                 ephemeral: true

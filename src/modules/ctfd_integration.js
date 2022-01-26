@@ -180,7 +180,7 @@ setInterval(async () => {
 module.exports = async (interaction, next) => {
     if (interaction.isCommand() && interaction.commandName === "ctfd") {
         // Check for access
-        if (!checkForAccess(interaction)) {
+        if (!(await checkForAccess(interaction))) {
             interaction.reply({
                 content: "Permission denied.",
                 ephemeral: true

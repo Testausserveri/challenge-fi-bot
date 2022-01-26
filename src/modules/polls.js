@@ -163,7 +163,7 @@ module.exports = async (interaction, next) => {
         // eslint-disable-next-line no-lonely-if
         if (interaction.commandName === "poll") {
             // Check for access
-            if (!checkForAccess(interaction)) {
+            if (!(await checkForAccess(interaction))) {
                 interaction.reply({
                     content: "Permission denied.",
                     ephemeral: true
