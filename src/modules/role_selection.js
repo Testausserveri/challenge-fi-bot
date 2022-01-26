@@ -225,7 +225,7 @@ module.exports = async (interaction, next) => {
                     })
                 } else if (interaction.guild.roles.resolve(roleId) !== null) {
                     // Make sure the role is not yet an option
-                    const notAnOption = Object.keys(JSON.parse(JSON.stringify(roleSelection.roles))).filter((id) => id === roleId).length === 0
+                    const notAnOption = Object.keys(roleSelection.roles).filter((id) => id === roleId).length === 0
                     if (notAnOption) {
                         // Fetch the message
                         const msg = await findMessage(roleSelection.message, interaction.guild)
