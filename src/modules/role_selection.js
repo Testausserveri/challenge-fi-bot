@@ -113,7 +113,7 @@ module.exports = async (interaction, next) => {
                 })
                 let title; let description; let footer; let image; let
                     color = null
-                for await (const option of interaction.options.data) {
+                for await (const option of interaction.options.data[0].options) {
                     // eslint-disable-next-line default-case
                     switch (option.name) {
                     case "title": {
