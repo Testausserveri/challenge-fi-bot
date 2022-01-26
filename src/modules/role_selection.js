@@ -227,6 +227,13 @@ module.exports = async (interaction, next) => {
                             })
                             return
                         }
+                        if (msg.components[0].components.length === 5) {
+                            interaction.followUp({
+                                content: "Maximum number of buttons reached.",
+                                ephemeral: true
+                            })
+                            return
+                        }
                         // Update the database
                         if (roleSelection.roles === undefined) roleSelection.roles = {}
                         roleSelection.roles[roleId] = text
