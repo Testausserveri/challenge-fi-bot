@@ -1,1 +1,9 @@
 node_modules
+.vscode
+dev
+.env.example
+.eslintignore
+.eslintrc.js
+.gitattributes
+.gitignore
+README.md
