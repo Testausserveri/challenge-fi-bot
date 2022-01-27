@@ -10,13 +10,15 @@ if (global.messageLocationCache === undefined) global.messageLocationCache = {}
  * @returns {Message}
  */
 module.exports = async (id, guild) => {
-    if (global.messageLocationCache && global.messageLocationCache[`${guild.id}-${id}`] !== undefined) {
+    console.debug("CACHE", global.messageLocationCache)
+    if (global.messageLocationCache !== undefined && global.messageLocationCache[`${guild.id}-${id}`] !== undefined) {
         const channel = await guild.channels.fetch(global.messageLocationCache[`${guild.id}-${id}`])
         global.messageLocationCache[`${guild.id}-${id}`] = undefined // Reset the cache if the message does not exist
         if (!channel) return null
         const target = await channel[1].messages.fetch(id, { force: true })
         if (!target) return null
         global.messageLocationCache[`${guild.id}-${id}`] = channel[1].id // Add back to cache, as the message exists
+        console.debug("Served from cache")
         return target
     }
     const channels = (await guild.channels.fetch()).filter((c) => ["GUILD_TEXT", "GUILD_NEWS"].includes(c.type))
