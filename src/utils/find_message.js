@@ -12,12 +12,12 @@ if (global.messageLocationCache === undefined) global.messageLocationCache = {}
 module.exports = async (id, guild) => {
     console.debug("CACHE", global.messageLocationCache)
     if (global.messageLocationCache !== undefined && global.messageLocationCache[`${guild.id}-${id}`] !== undefined) {
-        const channel = await guild.channels.get(global.messageLocationCache[`${guild.id}-${id}`])
+        const channel = await guild.channels.fetch(global.messageLocationCache[`${guild.id}-${id}`])
         global.messageLocationCache[`${guild.id}-${id}`] = undefined // Reset the cache if the message does not exist
         if (!channel) return null
-        const target = await channel[1].messages.fetch(id, { force: true })
+        const target = await channel.messages.fetch(id, { force: true })
         if (!target) return null
-        global.messageLocationCache[`${guild.id}-${id}`] = channel[1].id // Add back to cache, as the message exists
+        global.messageLocationCache[`${guild.id}-${id}`] = channel.id // Add back to cache, as the message exists
         console.debug("Served from cache")
         return target
     }
@@ -28,6 +28,7 @@ module.exports = async (id, guild) => {
             const target = await channel[1].messages.fetch(id, { force: true })
             if (target) {
                 global.messageLocationCache[`${guild.id}-${id}`] = channel[1].id
+                console.debug("To cache", channel[1].id)
                 return target
             }
         // eslint-disable-next-line no-empty
