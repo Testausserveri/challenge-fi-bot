@@ -21,6 +21,17 @@ module.exports = async (interaction, next) => {
         await interaction.deferReply({
             ephemeral: true
         })
+
+        let canTimeout = true
+
+        setTimeout(() => {
+            if (!canTimeout) return
+            interaction.followUp({
+                content: "The execution of `/info` can at most take **a few minutes**. Please wait...",
+                ephemeral: true
+            })
+        }, 5000)
+
         const roleSelection = await global.schemas.RoleSelectionModel.find({ id: interaction.guild.id }).exec()
         const polls = await global.schemas.PollModel.find({ id: interaction.guild.id }).exec()
         let ctfdIntegration = await global.schemas.CTFdIntegrationModel.findOne({ id: interaction.guild.id }).exec()
@@ -43,6 +54,7 @@ module.exports = async (interaction, next) => {
                 CTFd challenge notification channel: <#${ctfdIntegration.challengeNotifications ?? "none"}>
                 CTFd solve notification channel: <#${ctfdIntegration.solveNotifications ?? "none"}>
             `)
+        canTimeout = false
         interaction.followUp({
             ephemeral: true,
             embeds: [embed]
