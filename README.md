@@ -25,6 +25,7 @@ This project uses Docker and Docker-Compose for deployment and testing.<br>
 The project consists of two major components (containers):
 1. The bot itself developed with `Node.Js v16.13` using `Discord.js` (in `/src`).
 2. The database, in this case `MongoDB` (schemas in `/src/configuration/database_schemas.js`).
+3. Searching and checking for the existence of messages in a large server's channels takes long. We should store both the channel and message ids to eliminate the need to query all channels. This especially affects poll message updates and the `/info` command's speed of execution.
 
 All relevant configuration is done with environment variables. See `.env.example`.
 
