@@ -21,12 +21,10 @@ module.exports = async (interaction, next) => {
         await interaction.deferReply({
             ephemeral: true
         })
-        console.debug("INFO DB QUERY")
         const roleSelection = await global.schemas.RoleSelectionModel.find({ id: interaction.guild.id }).exec()
         const polls = await global.schemas.PollModel.find({ id: interaction.guild.id }).exec()
         let ctfdIntegration = await global.schemas.CTFdIntegrationModel.findOne({ id: interaction.guild.id }).exec()
         if (ctfdIntegration === null) ctfdIntegration = {}
-        console.debug("INFO MESSAGE CONSTRUCTION")
 
         const embed = new MessageEmbed()
             .setAuthor("Server configuration")
