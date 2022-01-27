@@ -12,7 +12,7 @@ if (global.messageLocationCache === undefined) global.messageLocationCache = {}
 module.exports = async (id, guild) => {
     console.debug("CACHE", global.messageLocationCache)
     if (global.messageLocationCache !== undefined && global.messageLocationCache[`${guild.id}-${id}`] !== undefined) {
-        const channel = await guild.channels.fetch(global.messageLocationCache[`${guild.id}-${id}`])
+        const channel = await guild.channels.get(global.messageLocationCache[`${guild.id}-${id}`])
         global.messageLocationCache[`${guild.id}-${id}`] = undefined // Reset the cache if the message does not exist
         if (!channel) return null
         const target = await channel[1].messages.fetch(id, { force: true })
