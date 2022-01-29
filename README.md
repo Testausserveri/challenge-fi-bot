@@ -1,8 +1,8 @@
-<center>
+<div align="center">
     <img src="https://raw.githubusercontent.com/Testausserveri/challenge-fi-bot/main/stegosiili_.png" width="200px" height="200px">
     <h1>Challenge.fi-bot</h1>
     A community management bot for the <a href="https://challenge.fi">challenge.fi</a> Discord, which implements a CTFd-platform integration.
-</center>
+</div>
 <br>
 Usage is of course not limited to only that server, you may download these sources and use it in any Discord server you want.<br>
 Instructions on how to do that will be below
