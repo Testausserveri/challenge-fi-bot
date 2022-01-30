@@ -10,7 +10,7 @@ module.exports = function (value) {
     else return false
     try {
         const possiblyJson = JSON.parse(value)
-        if (Object.keys(possiblyJson) > 0) return true // Empty JSON is considered invalid JSON. Why would you want to parse an empty object?
+        if (Object.keys(possiblyJson).length > 0) return true // Empty JSON is considered invalid JSON. Why would you want to parse an empty object?
     }
     catch(e) {
         return false
