@@ -8,6 +8,7 @@ const {
 const request = require("../utils/request")
 const checkForAccess = require("../utils/check_for_access")
 const getNumberEnding = require("../utils/get_number_ending")
+const isValidJson = require("../utils/is_valid_json")
 
 // Poll based notification & leaderboard state change listener
 if (global.pollTimeCTFd < 10000) console.warn("The CTFd server polling interval is too low! Consider making it higher to avoid unnecessary service strain!")
@@ -206,7 +207,8 @@ module.exports = async (interaction, next) => {
                     const testRequest = await request("GET", `${apiUrl}api/v1/swagger.json`)
                     if (
                         testRequest.status === 200 &&
-                        testRequest.headers["content-length"] === "68160"
+                        isValidJson(testRequest.data) &&
+                        JSON.parse(testRequest.data).basePath === "/api/v1" // Should be enough checks right?
                     ) {
                         // The API is reachable
                         const challengeTest = await request("GET", `${apiUrl}api/v1/challenges`, {
