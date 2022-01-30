@@ -267,6 +267,7 @@ module.exports = [
                     {
                         name: "channel-id",
                         type: 3,
+                        required: true,
                         description:
                             "The id of the channel to send the notifications to."
                     }
@@ -281,6 +282,7 @@ module.exports = [
                     {
                         name: "channel-id",
                         type: 3,
+                        required: true,
                         description:
                             "The id of the channel to send the notifications to."
                     }
