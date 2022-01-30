@@ -208,7 +208,7 @@ module.exports = async (interaction, next) => {
                     if (
                         testRequest.status === 200 &&
                         isValidJson(testRequest.data) &&
-                        JSON.parse(testRequest.data).basePath === "/api/v1" // Should be enough checks right?
+                        JSON.parse(testRequest.data).basePath == "/api/v1" // Should be enough checks right?
                     ) {
                         // The API is reachable
                         const challengeTest = await request("GET", `${apiUrl}api/v1/challenges`, {
