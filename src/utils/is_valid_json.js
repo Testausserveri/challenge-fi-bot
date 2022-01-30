@@ -8,8 +8,7 @@ module.exports = function (value) {
     try {
         JSON.parse(value)
         return true
-    }
-    catch(e) {
+    } catch(e) {
         return false
     }
 }
