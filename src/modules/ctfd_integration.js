@@ -108,11 +108,14 @@ setInterval(async () => {
         // New solve notifications
         if (document.solveNotifications !== "") {
             // We have to make a request for each challenge
+            // eslint-disable-next-line no-continue
             let doNotNotify = false
-            if (document.cachedSolves === null || document.cachedSolves === undefined) {
-                document.cachedSolves = {}
+            let updated = false
+            if (document.cachedSolves[0] === "add-in") {
                 doNotNotify = true
+                document.cachedSolves = []
             }
+            if (document.cachedChallenges.length === 0) continue
             // eslint-disable-next-line no-restricted-syntax
             for await (const { id, name, value } of document.cachedChallenges) {
                 try {
@@ -143,6 +146,7 @@ setInterval(async () => {
                                         cachedSolves: document.cachedSolves
                                     }
                                 }).exec()
+                            updated = true
                             if (channel === null) {
                                 console.error("Unable to send notifications for", document.id, "to", document.solveNotifications)
                             } else {
@@ -172,6 +176,15 @@ setInterval(async () => {
                 } catch (e) {
                     console.error("Solve notification error", e)
                 }
+            }
+            // Update as empty if required
+            if (updated === false && doNotNotify === true) {
+                await global.schemas.CTFdIntegrationModel.findOneAndUpdate({ id: document.id },
+                    {
+                        $set: {
+                            cachedSolves: document.cachedSolves
+                        }
+                    }).exec()
             }
         }
     }
@@ -247,7 +260,7 @@ module.exports = async (interaction, next) => {
                                     })),
                                     cachedLeaderboard: [],
                                     challengeNotifications: "",
-                                    cachedSolves: null,
+                                    cachedSolves: ["add-in"],
                                     leaderboardRoles: [],
                                     solveNotifications: "",
                                     leaderboardSync: ""
