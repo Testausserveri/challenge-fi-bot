@@ -3,13 +3,13 @@ const {
     Interaction,
     // eslint-disable-next-line no-unused-vars
     TextChannel,
-    MessageEmbed,
     MessageAttachment,
     // eslint-disable-next-line no-unused-vars
     Message,
     MessageActionRow,
     MessageButton
 } = require("discord.js")
+const PatchedMessageEmbed = require("../utils/message_embed_patch")
 const request = require("../utils/request")
 const findMessage = require("../utils/find_message")
 const checkForAccess = require("../utils/check_for_access")
@@ -76,7 +76,7 @@ function generateButtonComponents(list, replaceLabel) {
  * @returns {Promise<Message>}
  */
 async function createPoll(title, description, image, color, options, end, channel) {
-    const embed = new MessageEmbed({ title, description })
+    const embed = new PatchedMessageEmbed({ title, description })
     let thumbnailAttachment = null
     if (image) {
         thumbnailAttachment = new MessageAttachment(new Buffer.from(image, "base64"), "thumbnail.png")

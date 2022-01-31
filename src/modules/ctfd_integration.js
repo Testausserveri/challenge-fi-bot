@@ -1,10 +1,10 @@
 const {
     // eslint-disable-next-line no-unused-vars
     Interaction,
-    MessageEmbed,
     MessageActionRow,
     MessageButton
 } = require("discord.js")
+const PatchedMessageEmbed = require("../utils/message_embed_patch")
 const request = require("../utils/request")
 const checkForAccess = require("../utils/check_for_access")
 const getNumberEnding = require("../utils/get_number_ending")
@@ -44,7 +44,7 @@ setInterval(async () => {
                         } else {
                             // eslint-disable-next-line no-restricted-syntax
                             for await (const newChallenge of newChallenges) {
-                                const embed = new MessageEmbed()
+                                const embed = new PatchedMessageEmbed()
                                 const button =
                                     new MessageActionRow().addComponents(new MessageButton({
                                         style: "LINK",
@@ -88,6 +88,7 @@ setInterval(async () => {
                                 id: challenge.id,
                                 value: challenge.value
                             }))
+                            if (!Array.isArray(document) || document === undefined) document = []
                             await global.schemas.CTFdIntegrationModel.findOneAndUpdate({ id: document.id }, {
                                 $set: {
                                     cachedChallenges: document.cachedChallenges
@@ -107,8 +108,15 @@ setInterval(async () => {
         // New solve notifications
         if (document.solveNotifications !== "") {
             // We have to make a request for each challenge
+            // eslint-disable-next-line no-continue
             let doNotNotify = false
-            if (Object.keys(document.cachedSolves).length === 0) doNotNotify = true
+            let updated = false
+            if (document.cachedSolves === "create") {
+                doNotNotify = true
+                document.cachedSolves = {}
+            }
+            // eslint-disable-next-line no-continue
+            if (document.cachedChallenges.length === 0) continue
             // eslint-disable-next-line no-restricted-syntax
             for await (const { id, name, value } of document.cachedChallenges) {
                 try {
@@ -139,6 +147,7 @@ setInterval(async () => {
                                         cachedSolves: document.cachedSolves
                                     }
                                 }).exec()
+                            updated = true
                             if (channel === null) {
                                 console.error("Unable to send notifications for", document.id, "to", document.solveNotifications)
                             } else {
@@ -148,8 +157,8 @@ setInterval(async () => {
                                 for await (const newSolve of newSolves) {
                                     // eslint-disable-next-line no-continue
                                     if (newSolve.index > 3) continue // Only display top 3, TODO: Maybe make this configurable?
-                                    const embed = new MessageEmbed()
-                                    embed.setTitle(`New solve! ${newSolve.index === 1 ? "FIRST BLOOD!" : ""}`)
+                                    const embed = new PatchedMessageEmbed()
+                                    embed.setTitle(`New solve! ${newSolve.index === 1 ? "FIRST SOLVE!" : ""}`)
                                     embed.setDescription(`
                                     \`${newSolve.name}\` solved \`${name}\`!
                                     They were the \`${newSolve.index}${getNumberEnding(newSolve.index)}\` to solve the challenge.
@@ -168,6 +177,15 @@ setInterval(async () => {
                 } catch (e) {
                     console.error("Solve notification error", e)
                 }
+            }
+            // Update as empty if required
+            if (updated === false && doNotNotify === true) {
+                await global.schemas.CTFdIntegrationModel.findOneAndUpdate({ id: document.id },
+                    {
+                        $set: {
+                            cachedSolves: document.cachedSolves
+                        }
+                    }).exec()
             }
         }
     }
@@ -243,7 +261,7 @@ module.exports = async (interaction, next) => {
                                     })),
                                     cachedLeaderboard: [],
                                     challengeNotifications: "",
-                                    cachedSolves: {},
+                                    cachedSolves: "create",
                                     leaderboardRoles: [],
                                     solveNotifications: "",
                                     leaderboardSync: ""
@@ -332,7 +350,7 @@ module.exports = async (interaction, next) => {
                 return
             }
             try {
-                const embed = new MessageEmbed({
+                const embed = new PatchedMessageEmbed({
                     title: "Info",
                     description: "New challenge -notifications will now be sent to this channel.",
                     footer: {
@@ -389,7 +407,7 @@ module.exports = async (interaction, next) => {
                 return
             }
             try {
-                const embed = new MessageEmbed({
+                const embed = new PatchedMessageEmbed({
                     title: "Info",
                     description: "New solve -notifications will now be sent to this channel.",
                     footer: {

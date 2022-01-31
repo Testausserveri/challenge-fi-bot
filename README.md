@@ -4,11 +4,12 @@
     A community management bot for the <a href="https://challenge.fi">challenge.fi</a> Discord, which implements a CTFd-platform integration.
 </div>
 <br>
+
 Usage is of course not limited to only that server, you may download these sources and use it in any Discord server you want.<br>
 Instructions on how to do that will be below
 This project was originally developed by `Eemil S. (Esinko#7976)` at `Testausserveri ry` and <br>
 completed on the `31st` of `December 2021`.
-<br>
+
 However, contributions are more than welcome.
 
 ## Enhancements

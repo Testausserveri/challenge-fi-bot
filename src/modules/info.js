@@ -1,8 +1,9 @@
 // eslint-disable-next-line no-unused-vars
-const { Interaction, MessageEmbed } = require("discord.js")
+const { Interaction } = require("discord.js")
 const { createHash } = require("crypto")
 const findMessage = require("../utils/find_message")
 const checkForAccess = require("../utils/check_for_access")
+const PatchedMessageEmbed = require("../utils/message_embed_patch")
 
 /**
  * Some module
@@ -37,7 +38,7 @@ module.exports = async (interaction, next) => {
         let ctfdIntegration = await global.schemas.CTFdIntegrationModel.findOne({ id: interaction.guild.id }).exec()
         if (ctfdIntegration === null) ctfdIntegration = {}
 
-        const embed = new MessageEmbed()
+        const embed = new PatchedMessageEmbed()
             .setAuthor("Server configuration")
             .setTitle(interaction.guild.name)
             .setColor("#667bc4")
