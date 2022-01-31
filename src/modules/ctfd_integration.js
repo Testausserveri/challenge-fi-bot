@@ -1,10 +1,10 @@
 const {
     // eslint-disable-next-line no-unused-vars
     Interaction,
-    MessageEmbed,
     MessageActionRow,
     MessageButton
 } = require("discord.js")
+const PatchedMessageEmbed = require("../utils/message_embed_patch")
 const request = require("../utils/request")
 const checkForAccess = require("../utils/check_for_access")
 const getNumberEnding = require("../utils/get_number_ending")
@@ -44,7 +44,7 @@ setInterval(async () => {
                         } else {
                             // eslint-disable-next-line no-restricted-syntax
                             for await (const newChallenge of newChallenges) {
-                                const embed = new MessageEmbed()
+                                const embed = new PatchedMessageEmbed()
                                 const button =
                                     new MessageActionRow().addComponents(new MessageButton({
                                         style: "LINK",
@@ -115,6 +115,7 @@ setInterval(async () => {
                 doNotNotify = true
                 document.cachedSolves = {}
             }
+            // eslint-disable-next-line no-continue
             if (document.cachedChallenges.length === 0) continue
             // eslint-disable-next-line no-restricted-syntax
             for await (const { id, name, value } of document.cachedChallenges) {
@@ -156,7 +157,7 @@ setInterval(async () => {
                                 for await (const newSolve of newSolves) {
                                     // eslint-disable-next-line no-continue
                                     if (newSolve.index > 3) continue // Only display top 3, TODO: Maybe make this configurable?
-                                    const embed = new MessageEmbed()
+                                    const embed = new PatchedMessageEmbed()
                                     embed.setTitle(`New solve! ${newSolve.index === 1 ? "FIRST SOLVE!" : ""}`)
                                     embed.setDescription(`
                                     \`${newSolve.name}\` solved \`${name}\`!
@@ -349,7 +350,7 @@ module.exports = async (interaction, next) => {
                 return
             }
             try {
-                const embed = new MessageEmbed({
+                const embed = new PatchedMessageEmbed({
                     title: "Info",
                     description: "New challenge -notifications will now be sent to this channel.",
                     footer: {
@@ -406,7 +407,7 @@ module.exports = async (interaction, next) => {
                 return
             }
             try {
-                const embed = new MessageEmbed({
+                const embed = new PatchedMessageEmbed({
                     title: "Info",
                     description: "New solve -notifications will now be sent to this channel.",
                     footer: {

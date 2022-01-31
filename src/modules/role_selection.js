@@ -4,7 +4,6 @@ const {
     Interaction,
     // eslint-disable-next-line no-unused-vars
     TextChannel,
-    MessageEmbed,
     MessageAttachment,
     // eslint-disable-next-line no-unused-vars
     Message,
@@ -12,6 +11,7 @@ const {
     MessageButton
 } = require("discord.js")
 const request = require("../utils/request")
+const PatchedMessageEmbed = require("../utils/message_embed_patch")
 const checkForAccess = require("../utils/check_for_access")
 const findMessage = require("../utils/find_message")
 
@@ -25,7 +25,7 @@ const findMessage = require("../utils/find_message")
  * @returns {Promise<Message>}
  */
 async function createRoleSelection(title, description, footer, image, color, channel) {
-    const embed = new MessageEmbed({
+    const embed = new PatchedMessageEmbed({
         title,
         description
     })

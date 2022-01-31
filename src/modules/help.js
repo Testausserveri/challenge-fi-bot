@@ -1,10 +1,10 @@
 const {
     // eslint-disable-next-line no-unused-vars
     Interaction,
-    MessageEmbed,
     MessageActionRow,
     MessageButton
 } = require("discord.js")
+const PatchedMessageEmbed = require("../utils/message_embed_patch")
 
 /**
  * Some module
@@ -20,7 +20,7 @@ module.exports = async (interaction, next) => {
             const command = interaction.options.get("command-name").value
             switch (command) {
             case "configure-access": {
-                const embed = new MessageEmbed()
+                const embed = new PatchedMessageEmbed()
                     .setAuthor("Bot access management")
                     .setTitle("/configure-access")
                     .setDescription(`
@@ -38,7 +38,7 @@ module.exports = async (interaction, next) => {
                 break
             }
             case "ctfd": {
-                const embed = new MessageEmbed()
+                const embed = new PatchedMessageEmbed()
                     .setAuthor("CTFd-platform integration")
                     .setTitle("/ctfd")
                     .setDescription(`
@@ -69,7 +69,7 @@ module.exports = async (interaction, next) => {
                 break
             }
             case "help": {
-                const embed = new MessageEmbed()
+                const embed = new PatchedMessageEmbed()
                     .setAuthor("Bot help & FAQ")
                     .setTitle("/help")
                     .setDescription("Get information on how to use the bot.")
@@ -84,7 +84,7 @@ module.exports = async (interaction, next) => {
                 break
             }
             case "poll": {
-                const embed = new MessageEmbed()
+                const embed = new PatchedMessageEmbed()
                     .setAuthor("Community polls")
                     .setTitle("/poll")
                     .setDescription("Manage community polls and find out what people want!")
@@ -112,7 +112,7 @@ module.exports = async (interaction, next) => {
                 break
             }
             case "purge": {
-                const embed = new MessageEmbed()
+                const embed = new PatchedMessageEmbed()
                     .setAuthor("Message deletion utility")
                     .setTitle("/purge")
                     .setDescription("Purge messages in bulk from a channel.")
@@ -128,7 +128,7 @@ module.exports = async (interaction, next) => {
                 break
             }
             case "role-selection": {
-                const embed = new MessageEmbed()
+                const embed = new PatchedMessageEmbed()
                     .setAuthor("Community role-selection")
                     .setTitle("/role-selection")
                     .setDescription("Manage role selections. Give people the ability to customize their member profile!")
@@ -169,7 +169,7 @@ module.exports = async (interaction, next) => {
                 break
             }
             case "info": {
-                const embed = new MessageEmbed()
+                const embed = new PatchedMessageEmbed()
                     .setAuthor("Configuration inspection utility")
                     .setTitle("/info")
                     .setDescription("Get the active bot configuration.")
@@ -190,7 +190,7 @@ module.exports = async (interaction, next) => {
             }
         } else {
             // Default help message
-            const embed = new MessageEmbed()
+            const embed = new PatchedMessageEmbed()
                 .setTitle("Help & FAQ")
                 .setDescription("What you can do with this bot application and some frequently asked questions about it!")
                 .addField("Commands", "```/configure-access\n/poll\n/ctfd\n/purge\n/role-selection\n/info```", true)
