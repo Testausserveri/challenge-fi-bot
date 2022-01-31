@@ -111,9 +111,9 @@ setInterval(async () => {
             // eslint-disable-next-line no-continue
             let doNotNotify = false
             let updated = false
-            if (document.cachedSolves[0] === "add-in") {
+            if (document.cachedSolves === "create") {
                 doNotNotify = true
-                document.cachedSolves = []
+                document.cachedSolves = {}
             }
             if (document.cachedChallenges.length === 0) continue
             // eslint-disable-next-line no-restricted-syntax
@@ -260,7 +260,7 @@ module.exports = async (interaction, next) => {
                                     })),
                                     cachedLeaderboard: [],
                                     challengeNotifications: "",
-                                    cachedSolves: ["add-in"],
+                                    cachedSolves: "create",
                                     leaderboardRoles: [],
                                     solveNotifications: "",
                                     leaderboardSync: ""
