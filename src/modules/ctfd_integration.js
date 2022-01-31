@@ -107,7 +107,10 @@ setInterval(async () => {
         if (document.solveNotifications !== "") {
             // We have to make a request for each challenge
             let doNotNotify = false
-            if (Object.keys(document.cachedSolves).length === 0) doNotNotify = true
+            if (document.cachedSolves === null || document.cachedSolves === undefined) {
+                document.cachedSolves = {}
+                doNotNotify = true
+            }
             // eslint-disable-next-line no-restricted-syntax
             for await (const { id, name, value } of document.cachedChallenges) {
                 try {
@@ -241,7 +244,7 @@ module.exports = async (interaction, next) => {
                                     })),
                                     cachedLeaderboard: [],
                                     challengeNotifications: "",
-                                    cachedSolves: {},
+                                    cachedSolves: null,
                                     leaderboardRoles: [],
                                     solveNotifications: "",
                                     leaderboardSync: ""
