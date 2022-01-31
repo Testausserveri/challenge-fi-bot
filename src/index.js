@@ -54,7 +54,7 @@ connect(process.env.DATABASE_URL).then(() => {
 // Connect to Discord
 client.on("ready", async () => {
     console.log(`Connected to Discord as ${client.user.username}#${client.user.discriminator} (${client.user.id}).`)
-    client.user.setActivity("HedgeHax 😎", { type: "PLAYING" })
+    client.user.setActivity("HedgeHax 😎 — /help", { type: "PLAYING" })
 
     // Register slash commands
     const guildsWithDefaults = client.guilds.cache.map((guild) => guild.id)
