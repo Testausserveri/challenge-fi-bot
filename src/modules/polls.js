@@ -101,9 +101,9 @@ async function createPoll(title, description, image, color, options, end, channe
  */
 async function endPoll(message, document) {
     message.embeds[0].fields[0].name = "Results"
-    const winner = Object.keys(document.votes).sort((a, b) => a.length - b.length)
+    const winner = Object.keys(document.votes).sort((a, b) => document.votes[a].length - document.votes[b].length).reverse()[0]
     // eslint-disable-next-line max-len
-    message.embeds[0].fields[0].value = `‎\n${Object.keys(document.options).map((key) => `\`[ ${document.votes[key].length} ]\` **${numberToEmoji(key)}** ${document.options[key]}`).join("\n\n")}\n\n**Most votes:** \`${winner[0]} ${document.options[winner[0]]}\``
+    message.embeds[0].fields[0].value = `‎\n${Object.keys(document.options).map((key) => `\`[ ${document.votes[key].length} ]\` **${numberToEmoji(key)}** ${document.options[key]}`).join("\n\n")}\n\n**Most votes:** \`${winner} ${document.options[winner]}\``
     message.embeds[0].fields = [message.embeds[0].fields[0]]
     message.embeds[0].setFooter("Poll ended.")
     message.embeds[0].timestamp = null
