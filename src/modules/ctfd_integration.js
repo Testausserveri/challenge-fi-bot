@@ -88,6 +88,7 @@ setInterval(async () => {
                                 id: challenge.id,
                                 value: challenge.value
                             }))
+                            if (!Array.isArray(document) || document === undefined) document = []
                             await global.schemas.CTFdIntegrationModel.findOneAndUpdate({ id: document.id }, {
                                 $set: {
                                     cachedChallenges: document.cachedChallenges
