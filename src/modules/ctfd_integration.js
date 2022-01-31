@@ -157,7 +157,7 @@ setInterval(async () => {
                                     // eslint-disable-next-line no-continue
                                     if (newSolve.index > 3) continue // Only display top 3, TODO: Maybe make this configurable?
                                     const embed = new MessageEmbed()
-                                    embed.setTitle(`New solve! ${newSolve.index === 1 ? "FIRST BLOOD!" : ""}`)
+                                    embed.setTitle(`New solve! ${newSolve.index === 1 ? "FIRST SOLVE!" : ""}`)
                                     embed.setDescription(`
                                     \`${newSolve.name}\` solved \`${name}\`!
                                     They were the \`${newSolve.index}${getNumberEnding(newSolve.index)}\` to solve the challenge.
