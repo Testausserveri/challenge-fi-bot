@@ -53,7 +53,7 @@ setInterval(async () => {
                                     }))
                                 embed.setTitle("New challenge!")
                                 embed.setColor("PURPLE")
-                                const tags = newChallenge.tags.length !== 0 ? newChallenge.tags.join(", ") : "none"
+                                const tags = newChallenge.tags.length !== 0 ? newChallenge.tags.map((tag) => tag.value).join(", ") : "none"
                                 embed.setDescription(
                                     `Name: \`${newChallenge.name}\`\n
                                     Category: \`${newChallenge.category}\`\n
