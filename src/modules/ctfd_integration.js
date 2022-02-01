@@ -88,7 +88,7 @@ setInterval(async () => {
                                 id: challenge.id,
                                 value: challenge.value
                             }))
-                            if (!Array.isArray(document) || document === undefined) document = []
+                            if (!Array.isArray(document.cachedChallenges) || document.cachedChallenges === undefined) document.cachedChallenges = []
                             await global.schemas.CTFdIntegrationModel.findOneAndUpdate({ id: document.id }, {
                                 $set: {
                                     cachedChallenges: document.cachedChallenges
@@ -115,8 +115,6 @@ setInterval(async () => {
                 doNotNotify = true
                 document.cachedSolves = {}
             }
-            // eslint-disable-next-line no-continue
-            if (document.cachedChallenges === undefined || document.cachedChallenges.length === 0) continue
             // eslint-disable-next-line no-restricted-syntax
             for await (const { id, name, value } of document.cachedChallenges) {
                 try {
