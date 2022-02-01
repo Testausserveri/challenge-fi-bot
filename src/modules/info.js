@@ -68,11 +68,11 @@ module.exports = async (interaction, next) => {
             `)
             .addField("Performance", `
                 \`\`\`
-                Ping:               ${Math.round(global.client.ws.ping)} ms
-                Database:           ${Math.round(queryTimeTaken)} ms
-                Message queries:    ${Math.round(messageQueryTimeTaken)} ms
-                \`\`\`\n
-                Total:              ~${afterMessageQuery - atExecution + global.client.ws.ping} ms
+                Ping:               ~${Math.round(global.client.ws.ping)} ms
+                Database:           ~${Math.round(queryTimeTaken)} ms
+                Message queries:    ~${Math.round(messageQueryTimeTaken)} ms
+                \`\`\`
+                Total: \`~${Math.round(afterMessageQuery - atExecution + global.client.ws.ping)}\` ms
             `)
         canTimeout = false
         interaction.followUp({
