@@ -108,7 +108,7 @@ client.on("interactionCreate", async (interaction) => {
         let breakOut = true
         const nextCall = () => { breakOut = false }
         await module(interaction, nextCall)
-        if (interaction.replied) break // Interaction has bee handled, we can safely assume nothing else wants to handle it
+        if (interaction.replied) break // Interaction has been handled, we can safely assume nothing else wants to handle it
         if (breakOut) break
     }
 })
