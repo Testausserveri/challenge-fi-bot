@@ -83,7 +83,7 @@ setInterval(async () => {
                             })))
                         ) {
                             // Cached & Current data do not match
-                            document = body.data.map((challenge) => ({
+                            document.cachedChallenges = body.data.map((challenge) => ({
                                 name: challenge.name,
                                 id: challenge.id,
                                 value: challenge.value
@@ -116,7 +116,7 @@ setInterval(async () => {
                 document.cachedSolves = {}
             }
             // eslint-disable-next-line no-continue
-            if (document.cachedChallenges.length === 0) continue
+            if (document.cachedChallenges === undefined || document.cachedChallenges.length === 0) continue
             // eslint-disable-next-line no-restricted-syntax
             for await (const { id, name, value } of document.cachedChallenges) {
                 try {
