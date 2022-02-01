@@ -243,7 +243,7 @@ module.exports = async (interaction, next) => {
                             JSON.parse(challengeTest.data).success === true &&
                             leaderboardTest.status === 200 &&
                             JSON.parse(leaderboardTest.data).success === true */
-                            true // TODO: Tests are disabled, enable them for production
+                            true // TODO: Leaderboard test is redundant
                         ) {
                             // TODO: Remove old messages & roles from users
                             // The API passed all tests
@@ -411,7 +411,7 @@ module.exports = async (interaction, next) => {
                     title: "Info",
                     description: "New solve -notifications will now be sent to this channel.",
                     footer: {
-                        text: "You may ignore this message."
+                        text: "This is a test. You may ignore this message."
                     }
                 })
                 await channel.send({ embeds: [embed] })
