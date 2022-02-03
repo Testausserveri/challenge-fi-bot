@@ -97,7 +97,7 @@ module.exports = async (interaction, next) => {
                         - \`options\` A semicolon separated list of all the poll options.
                         - \`thumbnail_url\` The poll thumbnail (optional).
                         - \`color\` The poll message sidebar color (optional, hex).
-                        - \`duration\` How long should the poll should last? (optional, <number> day(s)/hour(s)/minute(s)/second(s))
+                        - \`duration\` How long the poll should last (optional, <number> day(s)/hour(s)/minute(s)/second(s)).
 
                         **end**
                         End a poll

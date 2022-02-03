@@ -184,7 +184,7 @@ module.exports = [
                     {
                         name: "duration",
                         description:
-                            "How long should the poll should last? (<number> day(s)/hour(s)/minute(s)/second(s))",
+                            "How long the poll should last (<number> day(s)/hour(s)/minute(s)/second(s)).",
                         type: 3,
                         required: false
                     }
