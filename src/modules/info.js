@@ -31,7 +31,7 @@ module.exports = async (interaction, next) => {
             if (!canTimeout) return
             timedOut = true
             interaction.followUp({
-                content: "The execution of `/info` can at most take **a few minutes**. Please wait...",
+                content: "The execution of `/info` is taking longer than expected. Progress updates on command execution will be sent to you. Please wait...",
                 ephemeral: true
             })
         }, 5000)
@@ -113,7 +113,7 @@ module.exports = async (interaction, next) => {
                 Ping:               ~${Math.round(global.client.ws.ping)} ms
                 Database:           ~${Math.round(queryTimeTaken)} ms
                 Message queries:    ~${Math.round(messageQueryTimeTaken)} ms
-                CTFd Host:          ~${Math.round(hostTestTimeTaken)} ms*
+                CTFd host:          ~${Math.round(hostTestTimeTaken)} ms*
                 \`\`\`
                 Total: \`~${Math.round(afterMessageQuery - atExecution + global.client.ws.ping)}\` ms
                 
