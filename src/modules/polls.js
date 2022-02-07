@@ -321,7 +321,6 @@ module.exports = async (interaction, next) => {
                 })
                 const messageId = interaction.options.get("message_id")?.value
                 const poll = await global.schemas.PollModel.findOne({ id: interaction.guild.id, message: messageId }).exec()
-                console.log(poll)
                 if (poll !== null) {
                     const message = await findMessage(messageId, interaction.guild)
                     await endPoll(message, poll)
