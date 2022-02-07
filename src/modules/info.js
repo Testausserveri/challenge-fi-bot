@@ -113,8 +113,7 @@ module.exports = async (interaction, next) => {
                 Ping:               ~${Math.round(global.client.ws.ping)} ms
                 Database:           ~${Math.round(queryTimeTaken)} ms
                 Message queries:    ~${Math.round(messageQueryTimeTaken)} ms
-
-                + CTFd Host:          ~${Math.round(hostTestTimeTaken)} ms*
+                CTFd Host:          ~${Math.round(hostTestTimeTaken)} ms*
                 \`\`\`
                 Total: \`~${Math.round(afterMessageQuery - atExecution + global.client.ws.ping)}\` ms
                 
