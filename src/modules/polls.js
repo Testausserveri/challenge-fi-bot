@@ -207,7 +207,7 @@ module.exports = async (interaction, next) => {
                         break
                     }
                     case "description": {
-                        description = option.value.replace("\\n", "\n")
+                        description = option.value.replace(/\\n/g, "\n")
                         break
                     }
                     case "color": {
