@@ -207,7 +207,7 @@ module.exports = async (interaction, next) => {
                         break
                     }
                     case "description": {
-                        description = option.value
+                        description = option.value.replace("\\n", "\n")
                         break
                     }
                     case "color": {
@@ -279,35 +279,41 @@ module.exports = async (interaction, next) => {
                         ephemeral: true
                     })
                 } else {
-                    const msg = await createPoll(title, description, image, color, options, end, interaction.channel)
-                    global.schemas.PollModel.findOneAndUpdate(
-                        { id: interaction.guild.id, message: msg.id },
-                        {
-                            id: interaction.guild.id,
-                            embed: {
-                                title,
-                                description,
-                                image
+                    try {
+                        const msg = await createPoll(title, description, image, color, options, end, interaction.channel)
+                        await global.schemas.PollModel.findOneAndUpdate(
+                            { id: interaction.guild.id, message: msg.id },
+                            {
+                                id: interaction.guild.id,
+                                embed: {
+                                    title,
+                                    description,
+                                    image
+                                },
+                                message: msg.id,
+                                end,
+                                options,
+                                votes: votesTemplate
                             },
-                            message: msg.id,
-                            end,
-                            options,
-                            votes: votesTemplate
-                        },
-                        { upsert: true }
-                    ).exec().then(() => {
+                            { upsert: true }
+                        ).exec().then(() => {
+                            interaction.followUp({
+                                content: `Poll created. Id: \`${msg.id}\``,
+                                ephemeral: true
+                            })
+                        }).catch(() => {
+                            if (msg.deletable) msg.delete()
+                            interaction.followUp({
+                                content: "Database error.",
+                                ephemeral: true
+                            })
+                        })
+                    } catch (e) {
                         interaction.followUp({
-                            content: `Poll created. Id: \`${msg.id}\``,
+                            content: "Failed to create poll message.",
                             ephemeral: true
                         })
-                    }).catch((e) => {
-                        console.error(e)
-                        msg.delete()
-                        interaction.followUp({
-                            content: "Failed.",
-                            ephemeral: true
-                        })
-                    })
+                    }
                 }
             } else if (interaction.options.getSubcommand() === "end") {
                 await interaction.deferReply({
