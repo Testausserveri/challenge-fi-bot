@@ -5,6 +5,7 @@ const { performance } = require("perf_hooks")
 const findMessage = require("../utils/find_message")
 const checkForAccess = require("../utils/check_for_access")
 const PatchedMessageEmbed = require("../utils/message_embed_patch")
+const request = require("../utils/request")
 
 /**
  * Some module
@@ -25,8 +26,10 @@ module.exports = async (interaction, next) => {
         })
 
         let canTimeout = true
+        let timedOut = false
         setTimeout(() => {
             if (!canTimeout) return
+            timedOut = true
             interaction.followUp({
                 content: "The execution of `/info` can at most take **a few minutes**. Please wait...",
                 ephemeral: true
@@ -43,11 +46,49 @@ module.exports = async (interaction, next) => {
         const atQueryComplete = performance.now()
         const queryTimeTaken = atQueryComplete - atExecution
 
+        if (timedOut) { // Progress message for database related slowness
+            interaction.followUp({
+                content: "Database queries completed. Resolving message locations...",
+                ephemeral: true
+            })
+        }
+
         const roleSelectionData = roleSelection.length !== 0 ? (await Promise.all(roleSelection.map(async (document) => (await findMessage(document.message, interaction.guild))?.url ?? "invalid-message"))).join(", ") : "none"
         const pollData = polls.length !== 0 ? (await Promise.all(polls.map(async (document) => (await findMessage(document.message, interaction.guild))?.url ?? "invalid-message"))).join(" ") : "none"
 
         const afterMessageQuery = performance.now()
         const messageQueryTimeTaken = afterMessageQuery - atQueryComplete
+
+        if (timedOut) { // Progress message for message resolving related slowness
+            interaction.followUp({
+                content: "Message locations resolved. Testing CTFd host (if configured)...",
+                ephemeral: true
+            })
+        }
+
+        // Test CTFd host availability
+        let ctfdHostAvailability = "Unknown"
+        let hostTestTimeTaken = "Unknown"
+        if (Object.keys(ctfdIntegration).length > 0) {
+            const beforeHostTest = performance.now()
+            const challengeTest = await request("GET", `${ctfdIntegration.apiUrl}api/v1/challenges`, {
+                "Content-Type": "application/json",
+                Authorization: `Token ${ctfdIntegration.apiToken}`
+            })
+            hostTestTimeTaken = performance.now() - beforeHostTest
+            if (challengeTest.status === 200) {
+                ctfdHostAvailability = "Operational"
+            } else {
+                ctfdHostAvailability = "Degraded/Outage"
+            }
+        }
+
+        if (timedOut) { // Progress message for CTFd test related slowness
+            interaction.followUp({
+                content: "CTFd host test complete. Building summary...",
+                ephemeral: true
+            })
+        }
 
         const embed = new PatchedMessageEmbed()
             .setAuthor("Server configuration")
@@ -65,14 +106,19 @@ module.exports = async (interaction, next) => {
                 CTFd API Token SHA256 hash: \`${ctfdIntegration.apiToken !== null && ctfdIntegration.apiToken !== undefined ? createHash("sha256").update(ctfdIntegration.apiToken).digest("hex") : "none"}\`
                 CTFd challenge notification channel: <#${ctfdIntegration.challengeNotifications ?? "none"}>
                 CTFd solve notification channel: <#${ctfdIntegration.solveNotifications ?? "none"}>
+                Host status: \`${ctfdHostAvailability}\`
             `)
             .addField("Performance", `
                 \`\`\`
                 Ping:               ~${Math.round(global.client.ws.ping)} ms
                 Database:           ~${Math.round(queryTimeTaken)} ms
                 Message queries:    ~${Math.round(messageQueryTimeTaken)} ms
+
+                + CTFd Host:          ~${Math.round(hostTestTimeTaken)} ms*
                 \`\`\`
                 Total: \`~${Math.round(afterMessageQuery - atExecution + global.client.ws.ping)}\` ms
+                
+                _* Not included in total response time calculation._
             `)
         canTimeout = false
         interaction.followUp({
