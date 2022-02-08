@@ -39,7 +39,7 @@ module.exports = async (id, guild) => {
                 clearTimeout(flushTimeout)
                 return
             }
-            const target = await channel.messages.fetch(id, { force: true })
+            const target = await channel.messages.fetch(id)
             if (!target) {
                 resolve(null)
                 clearTimeout(flushTimeout)
@@ -50,6 +50,14 @@ module.exports = async (id, guild) => {
                 clearTimeout(flushTimeout)
                 resolve(target)
             }
+            // Check with a forced fetch, that the message does indeed exist (after resolve)
+            channel.messages.fetch(id, { force: true })
+                .then((msg) => {
+                    if (!msg) {
+                        console.warn("Message cache mismatch for", id)
+                        delete global.messageLocationCache[`${guild.id}-${id}`]
+                    }
+                })
         })
     }
     // Locate message by querying every channel
