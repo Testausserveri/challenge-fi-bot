@@ -23,7 +23,7 @@ module.exports = async (id, guild) => {
             const flushTimeout = setTimeout(async () => {
                 if (global.messageLocationCache === undefined || (typeof global.messageLocationCache === "object" && Object.keys(global.messageLocationCache).length === 0)) return
                 // Cache flushing can occur max one time per minute
-                if (global.messageLocationCache.age !== undefined && global.messageLocationCache.age + 60000 < new Date().getTime()) return
+                if (global.messageLocationCache.age !== undefined && global.messageLocationCache.age + 60000 > new Date().getTime()) return
                 console.warn("Message cache is being flushed!")
                 global.messageLocationCache = {}
                 doNotComplete = true
