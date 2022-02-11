@@ -99,6 +99,20 @@ client.on("ready", async () => {
     }
 })
 
+// Listen for guild invites to register commands
+client.on("guildCreate", async (guild) => {
+    console.warn(`Invited! Registering default slash command configuration for ${guild[0]}...`)
+    await guild.commands.set(slashCommands)
+    console.warn("Registered.")
+})
+
+// Listen for deleted messages and automatically remove them from the location cache
+global.messageLocationCache = {} // TODO: Global pollution is bad
+client.on("messageDelete", (message) => {
+    // TODO: Does this work for sure? Delete can sometimes be funky with global things...
+    if (global.messageLocationCache[`${message.guild.id}-${message.id}`] !== undefined) delete global.messageLocationCache[`${message.guild.id}-${message.id}`]
+})
+
 // Listen for Discord interactions (ie. slash commands)
 client.on("interactionCreate", async (interaction) => {
     if (interaction.user.bot) return
