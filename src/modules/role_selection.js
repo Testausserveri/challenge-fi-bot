@@ -85,16 +85,19 @@ module.exports = async (interaction, next) => {
         const role = await interaction.guild.roles.fetch(roleId)
         try {
             let msg = ""
+            let emojiToUse = ""
             if (interaction.member.roles.cache.has(roleId)) {
                 await interaction.member.roles.remove(roleId)
                 msg = "removed from"
+                emojiToUse = "❌"
             } else {
                 await interaction.member.roles.add(roleId)
                 msg = "added to"
+                emojiToUse = "✅"
             }
             if (interaction.replied === false) await interaction.deferReply({ ephemeral: true })
             interaction.followUp({
-                content: `✅ Role \`${role.name}\` ${msg} your account.`,
+                content: `${emojiToUse} Role \`${role.name}\` ${msg} your account.`,
                 ephemeral: true
             })
         } catch (e) {
