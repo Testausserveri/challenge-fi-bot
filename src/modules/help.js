@@ -99,7 +99,7 @@ module.exports = async (interaction, next) => {
                         - \`color\` The poll message sidebar color (optional, hex).
                         - \`duration\` How long the poll should last (optional, <number> day(s)/hour(s)/minute(s)/second(s)).
 
-                        _*The link must point to a Discord CDN. Thus if you want to attach something, send the attachment to Discord in its own message in any channel or DM and copy its link_
+                        _*The link must point to a Discord CDN. Thus if you want to attach something, send the attachment to Discord in its own message in any channel or DM and copy its link._
 
                         **end**
                         End a poll
