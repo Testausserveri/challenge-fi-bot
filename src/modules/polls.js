@@ -108,7 +108,7 @@ async function createPoll(title, description, image, color, options, end, channe
         embed.setThumbnail("attachment://thumbnail.png")
     }
     if (color) embed.setColor(color)
-    embed.addField("Options", `‎\n${Object.keys(options).map((key) => `**${numberToEmoji(key.replace(".", ""))}** ${options[key]}`).join("\n\n")}\n\n**Click the buttons below to vote!**`)
+    embed.addField("Options", `‎\n${Object.keys(options).map((key) => `**${numberToEmoji(key.replace(".", ""))}** ${options[key].trim()}`).join("\n\n")}\n\n**Click the buttons below to vote!**`)
     const endDate = new Date()
     endDate.setTime(end)
     embed.setFooter("This poll will end")
@@ -131,9 +131,9 @@ async function endPoll(message, document) {
         .reverse()[0]
     const winnerOptionText = numberToLetter(parseInt(winner.replace(".", ""), 10) - 1)
     const ties = Object.keys(document.votes)
-        .filter((key) => (document.votes[key] >= document.votes[winner] && key !== winner ? `, ${key} ${document.options[key]}` : ""))
+        .filter((key) => (document.votes[key] >= document.votes[winner] && key !== winner ? `, ${key} ${document.options[key].trim()}` : ""))
         .map((key) => numberToLetter(parseInt(key.replace(".", ""), 10) - 1))
-    const winnerText = ties.length > 0 ? `Tie between ${winnerOptionText}, ${ties.join(", ").replace(/, (?!.*?, )/g, " and ")}` : `${winnerOptionText} ${document.options[winner]} `
+    const winnerText = ties.length > 0 ? `Tie between ${winnerOptionText}, ${ties.join(", ").replace(/, (?!.*?, )/g, " and ")}` : `${winnerOptionText} ${document.options[winner].trim()} `
     // eslint-disable-next-line max-len
     message.embeds[0].fields[0].value = `‎\n${Object.keys(document.options).map((key) => `\`[ ${document.votes[key].length} ]\` **${numberToEmoji(key.replace(".", ""))}** ${document.options[key]}`).join("\n\n")}\n\n**Most votes:** \`${winnerText}\``
     message.embeds[0].fields = [message.embeds[0].fields[0]]
