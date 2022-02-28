@@ -95,9 +95,11 @@ module.exports = async (interaction, next) => {
                         - \`title\` The poll title.
                         - \`description\` The poll description.
                         - \`options\` A semicolon separated list of all the poll options.
-                        - \`thumbnail_url\` The poll thumbnail (optional).
+                        - \`thumbnail_url\` The poll thumbnail url* (optional).
                         - \`color\` The poll message sidebar color (optional, hex).
                         - \`duration\` How long the poll should last (optional, <number> day(s)/hour(s)/minute(s)/second(s)).
+
+                        _*The link must point to a Discord CDN. Thus if you want to attach something, send the attachment to Discord in its own message in any channel or DM and copy its link_
 
                         **end**
                         End a poll
