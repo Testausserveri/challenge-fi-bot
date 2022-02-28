@@ -170,6 +170,13 @@ module.exports = [
                         type: 3
                     },
                     {
+                        name: "duration",
+                        description:
+                            "How long the poll should last (<number> day(s)/hour(s)/minute(s)/second(s)).",
+                        type: 3,
+                        required: true
+                    },
+                    {
                         name: "thumbnail_url",
                         description: "The poll thumbnail.",
                         required: false,
@@ -180,13 +187,6 @@ module.exports = [
                         description: "The poll message sidebar color (hex).",
                         required: false,
                         type: 3
-                    },
-                    {
-                        name: "duration",
-                        description:
-                            "How long the poll should last (<number> day(s)/hour(s)/minute(s)/second(s)).",
-                        type: 3,
-                        required: false
                     }
                 ]
             },
