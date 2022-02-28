@@ -22,19 +22,45 @@ const checkForAccess = require("../utils/check_for_access")
  */
 function numberToEmoji(number, asObject) {
     const table = {
-        0: "0️⃣",
-        1: "1️⃣",
-        2: "2️⃣",
-        3: "3️⃣",
-        4: "4️⃣",
-        5: "5️⃣",
-        6: "6️⃣",
-        7: "7️⃣",
-        8: "8️⃣",
-        9: "9️⃣"
+        1: "🇦",
+        2: "🇧",
+        3: "🇨",
+        4: "🇩",
+        5: "🇪",
+        6: "🇫",
+        7: "🇬",
+        8: "🇭",
+        9: "🇮",
+        10: "🇯",
+        11: "🇰",
+        12: "🇱",
+        13: "🇲",
+        14: "🇳",
+        15: "🇴",
+        16: "🇵",
+        17: "🇶",
+        18: "🇷",
+        19: "🇸",
+        20: "🇹",
+        21: "🇺",
+        22: "🇻",
+        23: "🇼",
+        24: "🇽",
+        25: "🇾"
     }
-    if (!asObject) return number.toString().split("").map((digit) => table[digit]).join("")
+    console.log("Got", table[number.toString()])
+    if (!asObject) return table[number.toString()]
     return number.toString().split("").map((digit) => ({ name: table[digit] }))
+}
+
+/**
+ * Get a letter from the alphabet based on its position
+ * @param {number} number
+ * @returns {string|undefined}
+ */
+function numberToLetter(number) {
+    const ap = "abcdefghijklmnopqrstuvwxyz"
+    return ap.split("")[number]
 }
 
 /**
@@ -49,7 +75,7 @@ function generateButtonComponents(list, replaceLabel) {
         components.push(new MessageButton()
             .setStyle("SECONDARY")
             .setLabel(replaceLabel ?? list[key])
-            .setEmoji(numberToEmoji(key).replace(/:/g, ""))
+            .setEmoji(numberToEmoji(key.replace(".", "")).replace(/:/g, ""))
             .setCustomId(key))
     }
     const actionRows = [new MessageActionRow()]
@@ -83,7 +109,7 @@ async function createPoll(title, description, image, color, options, end, channe
         embed.setThumbnail("attachment://thumbnail.png")
     }
     if (color) embed.setColor(color)
-    embed.addField("Options", `‎\n${Object.keys(options).map((key) => `**${numberToEmoji(key)}** ${options[key]}`).join("\n\n")}\n\n**Click the buttons below to vote!**`)
+    embed.addField("Options", `‎\n${Object.keys(options).map((key) => `**${numberToEmoji(key.replace(".", ""))}** ${options[key]}`).join("\n\n")}\n\n**Click the buttons below to vote!**`)
     const endDate = new Date()
     endDate.setTime(end)
     embed.setFooter("This poll will end")
@@ -101,11 +127,17 @@ async function createPoll(title, description, image, color, options, end, channe
  */
 async function endPoll(message, document) {
     message.embeds[0].fields[0].name = "Results"
-    const winner = Object.keys(document.votes).sort((a, b) => document.votes[a].length - document.votes[b].length).reverse()[0]
-    const ties = Object.keys(document.votes).filter((key) => (document.votes[key].length >= document.votes[winner].length && key !== winner ? `, ${key} ${document.options[key]}` : ""))
-    const winnerText = ties.length > 0 ? `Tie between ${winner}, ${ties.join(", ").replace(/, (?!.*?, )/g, " and ")}` : `${winner} ${document.options[winner]} `
+    const winner = Object.keys(document.votes)
+        .sort((a, b) => document.votes[a].length - document.votes[b].length)
+        .reverse()[0]
+    console.log("WINNER", winner)
+    const winnerOptionText = numberToLetter(parseInt(winner.replace(".", ""), 10) - 1)
+    const ties = Object.keys(document.votes)
+        .filter((key) => (document.votes[key] >= document.votes[winner] && key !== winner ? `, ${key} ${document.options[key]}` : ""))
+        .map((key) => numberToLetter(parseInt(key.replace(".", ""), 10) - 1))
+    const winnerText = ties.length > 0 ? `Tie between ${winnerOptionText}, ${ties.join(", ").replace(/, (?!.*?, )/g, " and ")}` : `${winnerOptionText} ${document.options[winner]} `
     // eslint-disable-next-line max-len
-    message.embeds[0].fields[0].value = `‎\n${Object.keys(document.options).map((key) => `\`[ ${document.votes[key].length} ]\` **${numberToEmoji(key)}** ${document.options[key]}`).join("\n\n")}\n\n**Most votes:** \`${winnerText}\``
+    message.embeds[0].fields[0].value = `‎\n${Object.keys(document.options).map((key) => `\`[ ${document.votes[key].length} ]\` **${numberToEmoji(key.replace(".", ""))}** ${document.options[key]}`).join("\n\n")}\n\n**Most votes:** \`${winnerText}\``
     message.embeds[0].fields = [message.embeds[0].fields[0]]
     message.embeds[0].setFooter("Poll ended.")
     message.embeds[0].timestamp = null
