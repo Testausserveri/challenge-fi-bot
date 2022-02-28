@@ -129,11 +129,11 @@ async function endPoll(message, document) {
     const winner = Object.keys(document.votes)
         .sort((a, b) => document.votes[a].length - document.votes[b].length)
         .reverse()[0]
-    const winnerOptionText = numberToLetter(parseInt(winner.replace(".", ""), 10) - 1)
+    const winnerOptionText = numberToLetter(parseInt(winner.replace(".", ""), 10) - 1).toUpperCase()
     const ties = Object.keys(document.votes)
         .filter((key) => (document.votes[key] >= document.votes[winner] && key !== winner ? `, ${key} ${document.options[key].trim()}` : ""))
-        .map((key) => numberToLetter(parseInt(key.replace(".", ""), 10) - 1))
-    const winnerText = ties.length > 0 ? `Tie between ${winnerOptionText}, ${ties.join(", ").replace(/, (?!.*?, )/g, " and ")}` : `${winnerOptionText} ${document.options[winner].trim()}`
+        .map((key) => numberToLetter(parseInt(key.replace(".", ""), 10) - 1).toUpperCase())
+    const winnerText = ties.length > 0 ? `Tie between ${winnerOptionText}, ${ties.join(", ").replace(/, (?!.*?, )/g, " and ")}` : `${winnerOptionText}: ${document.options[winner].trim()}`
     // eslint-disable-next-line max-len
     message.embeds[0].fields[0].value = `‎\n${Object.keys(document.options).map((key) => `\`[ ${document.votes[key].length} ]\` **${numberToEmoji(key.replace(".", ""))}** ${document.options[key]}`).join("\n\n")}\n\n**Most votes:** \`${winnerText}\``
     message.embeds[0].fields = [message.embeds[0].fields[0]]
