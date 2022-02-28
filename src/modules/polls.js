@@ -48,7 +48,6 @@ function numberToEmoji(number, asObject) {
         24: "🇽",
         25: "🇾"
     }
-    console.log("Got", table[number.toString()])
     if (!asObject) return table[number.toString()]
     return number.toString().split("").map((digit) => ({ name: table[digit] }))
 }
@@ -130,7 +129,6 @@ async function endPoll(message, document) {
     const winner = Object.keys(document.votes)
         .sort((a, b) => document.votes[a].length - document.votes[b].length)
         .reverse()[0]
-    console.log("WINNER", winner)
     const winnerOptionText = numberToLetter(parseInt(winner.replace(".", ""), 10) - 1)
     const ties = Object.keys(document.votes)
         .filter((key) => (document.votes[key] >= document.votes[winner] && key !== winner ? `, ${key} ${document.options[key]}` : ""))
