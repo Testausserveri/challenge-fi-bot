@@ -131,7 +131,7 @@ async function endPoll(message, document) {
         .reverse()[0]
     const winnerOptionText = numberToLetter(parseInt(winner.replace(".", ""), 10) - 1).toUpperCase()
     const ties = Object.keys(document.votes)
-        .filter((key) => (document.votes[key] >= document.votes[winner] && key !== winner ? `, ${key} ${document.options[key].trim()}` : ""))
+        .filter((key) => (document.votes[key].length >= document.votes[winner].length && key !== winner ? `, ${key} ${document.options[key].trim()}` : ""))
         .map((key) => numberToLetter(parseInt(key.replace(".", ""), 10) - 1).toUpperCase())
     const winnerText = ties.length > 0 ? `Tie between ${winnerOptionText}, ${ties.join(", ").replace(/, (?!.*?, )/g, " and ")}` : `${winnerOptionText}: ${document.options[winner].trim()}`
     // eslint-disable-next-line max-len
