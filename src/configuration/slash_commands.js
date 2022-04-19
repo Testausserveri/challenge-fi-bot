@@ -285,7 +285,7 @@ module.exports = [
                             "The id of the channel to send the notifications to."
                     }
                 ]
-            }
+            },
             /*
             {
                 name: "create-leaderboard-clone",
@@ -293,6 +293,21 @@ module.exports = [
                 type: 3
             }
             */
+            {
+                name: "update-token",
+                description:
+                    "Update the API token in the current configuration",
+                type: 1,
+                options: [
+                    {
+                        name: "api-token",
+                        type: 3,
+                        description:
+                            "The new API token.",
+                        required: true
+                    }
+                ]
+            }
         ]
     },
     // Help message

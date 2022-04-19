@@ -14,7 +14,7 @@ const isValidJson = require("../utils/is_valid_json")
 if (global.pollTimeCTFd < 10000) console.warn("The CTFd server polling interval is too low! Consider making it higher to avoid unnecessary service strain!")
 setInterval(async () => {
     // eslint-disable-next-line no-restricted-syntax
-    for await (let document of global.schemas.CTFdIntegrationModel.find()) {
+    for await (const document of global.schemas.CTFdIntegrationModel.find()) {
         // New challenge notifications
         if (document.challengeNotifications !== "") {
             try {
@@ -422,6 +422,54 @@ module.exports = async (interaction, next) => {
             } catch (_) {
                 interaction.followUp({
                     content: "An error occurred :/ Make sure the bot has access to the channel and the bot has the `Send messages` permission.",
+                    ephemeral: true
+                })
+            }
+        } else if (interaction.options.getSubcommand() === "update-token") { // Update API tokens (they sometimes expire)
+            await interaction.deferReply({
+                ephemeral: true
+            })
+            // Fetch current configuration
+            const integration = await global.schemas.CTFdIntegrationModel.findOne({ id: interaction.guild.id }).exec()
+            // Check for valid data
+            if (!integration?.apiToken) {
+                interaction.followUp({
+                    content: "No API token configured.",
+                    ephemeral: true
+                })
+                return
+            }
+            const tokenToSet = interaction.options.get("api-token")?.value
+            if (!tokenToSet) {
+                interaction.followUp({
+                    content: "Invalid API token.",
+                    ephemeral: true
+                })
+                return
+            }
+            // Set new token
+            try {
+                const challengeTest = await request("GET", `${integration.apiUrl}api/v1/challenges`, {
+                    "Content-Type": "application/json",
+                    Authorization: `Token ${tokenToSet}`
+                })
+                console.debug(challengeTest.data.toString())
+                if (challengeTest.status !== 200) {
+                    interaction.followUp({
+                        content: "Invalid API token or permission denied.",
+                        ephemeral: true
+                    })
+                    return
+                }
+                // Save the new token
+                await global.schemas.CTFdIntegrationModel.findOneAndUpdate({ id: interaction.guild.id }, { $set: { apiToken: tokenToSet } }).exec()
+                interaction.followUp({
+                    content: "New token set!",
+                    ephemeral: true
+                })
+            } catch (_) {
+                interaction.followUp({
+                    content: "An unexpected error occurred.",
                     ephemeral: true
                 })
             }

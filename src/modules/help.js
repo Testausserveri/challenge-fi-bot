@@ -60,6 +60,11 @@ module.exports = async (interaction, next) => {
                         Configure new solve -notifications. Leave empty to disable.
                         *Parameters*
                         - \`channel-id\` The id of the channel to send the notifications to.
+
+                        **update-token**
+                        Update the API token in the current configuration.
+                        *Parameters*
+                        - \`api-token\` The new API token.
                     `)
                     .setColor("#667bc4")
                 interaction.followUp({
