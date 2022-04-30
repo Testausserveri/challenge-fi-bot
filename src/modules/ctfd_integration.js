@@ -60,7 +60,7 @@ setInterval(async () => {
                                     Points: \`${newChallenge.value}\`\n
                                     Tags: \`${tags}\``
                                 )
-                                embed.setFooter(`ID: ${newChallenge.id} TYPE: ${newChallenge.type}`)
+                                embed.setFooter({ text: `ID: ${newChallenge.id} TYPE: ${newChallenge.type}` })
                                 embed.setTimestamp(new Date().getTime())
                                 await channel.send({
                                     embeds: [embed],
@@ -162,7 +162,7 @@ setInterval(async () => {
                                     They were the \`${newSolve.index}${getNumberEnding(newSolve.index)}\` to solve the challenge.
                                     The solution was worth \`${value}\` points.`)
                                     embed.setColor("GREEN")
-                                    embed.setFooter(`ID: ${newSolve.account_id}`)
+                                    embed.setFooter({ text: `ID: ${newSolve.account_id}` })
                                     embed.setTimestamp(new Date().getTime())
                                     await channel.send({ embeds: [embed] })
                                 }

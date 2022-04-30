@@ -1,6 +1,7 @@
 // eslint-disable-next-line no-unused-vars
 const { Interaction } = require("discord.js")
-const slashCommands = require("../configuration/slash_commands")
+// const slashCommands = require("../configuration/slash_commands")
+const checkForAccess = require("../utils/check_for_access")
 
 /**
  * Configure who can use bot commands
@@ -12,7 +13,7 @@ module.exports = async (interaction, next) => {
         await interaction.deferReply({
             ephemeral: true
         })
-        if (interaction.member.permissions.has("ADMINISTRATOR")) {
+        if (checkForAccess(interaction, true)) {
             const roleId = interaction.options.get("role_id")?.value
             const role = await interaction.guild.roles.fetch(roleId)
             if (roleId !== null && role !== null) {
@@ -22,7 +23,8 @@ module.exports = async (interaction, next) => {
                     { upsert: true }
                 ).exec()
                 // Update slash commands
-                const newConfiguration = JSON.parse(JSON.stringify(slashCommands)).map((command) => { command.defaultPermission = false; return command })
+                // NOTE: This feature has been removed by Discord (without notice...)
+                /* const newConfiguration = JSON.parse(JSON.stringify(slashCommands)).map((command) => { command.defaultPermission = false; return command })
                 const commands = await interaction.guild.commands.fetch()
                 await interaction.guild.commands.set(newConfiguration)
                 const permissionUpdatesBulk = []
@@ -45,7 +47,7 @@ module.exports = async (interaction, next) => {
                         ]
                     })
                 }
-                await interaction.guild.commands.permissions.set({ fullPermissions: permissionUpdatesBulk })
+                await interaction.guild.commands.permissions.set({ fullPermissions: permissionUpdatesBulk }) */
                 interaction.followUp({
                     content: `Allowed access for \`${roleId}\``,
                     ephemeral: true

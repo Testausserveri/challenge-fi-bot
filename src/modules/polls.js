@@ -111,9 +111,9 @@ async function createPoll(title, description, image, color, options, end, channe
     embed.addField("Options", `‎\n${Object.keys(options).map((key) => `**${numberToEmoji(key.replace(".", ""))}** ${options[key].trim()}`).join("\n\n")}\n\n**Click the buttons below to vote!**`)
     const endDate = new Date()
     endDate.setTime(end)
-    embed.setFooter("This poll will end")
+    embed.setFooter({ text: "This poll will end" })
     embed.setTimestamp(endDate)
-    embed.setAuthor("Poll")
+    embed.setAuthor({ name: "Poll" })
     const msg = await channel.send({ embeds: [embed], components: generateButtonComponents(options, "0"), files: thumbnailAttachment !== null ? [thumbnailAttachment] : undefined })
     return msg
 }
@@ -137,7 +137,7 @@ async function endPoll(message, document) {
     // eslint-disable-next-line max-len
     message.embeds[0].fields[0].value = `‎\n${Object.keys(document.options).map((key) => `\`[ ${document.votes[key].length} ]\` **${numberToEmoji(key.replace(".", ""))}** ${document.options[key]}`).join("\n\n")}\n\n**Most votes:** \`${winnerText}\``
     message.embeds[0].fields = [message.embeds[0].fields[0]]
-    message.embeds[0].setFooter("Poll ended.")
+    message.embeds[0].setFooter({ text: "Poll ended." })
     message.embeds[0].timestamp = null
     return message.edit({
         embeds: [message.embeds[0]], files: [], attachments: [], components: []

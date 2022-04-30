@@ -57,8 +57,8 @@ client.on("ready", async () => {
     client.user.setActivity("HedgeHax 😎 — /help", { type: "PLAYING" })
 
     // Register slash commands
-    const guildsWithDefaults = client.guilds.cache.map((guild) => guild.id)
-    // eslint-disable-next-line no-restricted-syntax
+    // NOTE: This feature has been removed by Discord (without notice...)
+    /* const guildsWithDefaults = client.guilds.cache.map((guild) => guild.id)
     for await (const document of global.schemas.ServerAccessModel.find()) {
         console.debug(`Registering custom slash command configuration for ${document.id}...`)
         guildsWithDefaults.splice(guildsWithDefaults.indexOf(document.id), 1)
@@ -96,7 +96,14 @@ client.on("ready", async () => {
         console.warn(`Registering default slash command configuration for ${guild[0]}...`)
         await guild[1].commands.set(slashCommands)
         console.warn("Registered.")
+    } */
+    // Set all defaults
+    console.warn("Registering slash commands...")
+    // eslint-disable-next-line no-restricted-syntax
+    for await (const guild of client.guilds.cache) {
+        await guild[1].commands.set(slashCommands)
     }
+    console.warn("Slash commands registered.")
 })
 
 // Listen for guild invites to register commands

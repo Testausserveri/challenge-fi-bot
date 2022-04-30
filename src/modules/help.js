@@ -21,7 +21,7 @@ module.exports = async (interaction, next) => {
             switch (command) {
             case "configure-access": {
                 const embed = new PatchedMessageEmbed()
-                    .setAuthor("Bot access management")
+                    .setAuthor({ name: "Bot access management" })
                     .setTitle("/configure-access")
                     .setDescription(`
                         Set a role with command execution command execution privileges.
@@ -39,7 +39,7 @@ module.exports = async (interaction, next) => {
             }
             case "ctfd": {
                 const embed = new PatchedMessageEmbed()
-                    .setAuthor("CTFd-platform integration")
+                    .setAuthor({ name: "CTFd-platform integration" })
                     .setTitle("/ctfd")
                     .setDescription(`
                         Manage the CTFd integration.
@@ -75,7 +75,7 @@ module.exports = async (interaction, next) => {
             }
             case "help": {
                 const embed = new PatchedMessageEmbed()
-                    .setAuthor("Bot help & FAQ")
+                    .setAuthor({ name: "CTFd-platform integration" })
                     .setTitle("/help")
                     .setDescription("Get information on how to use the bot.")
                     .addField("Parameters", `
@@ -90,7 +90,7 @@ module.exports = async (interaction, next) => {
             }
             case "poll": {
                 const embed = new PatchedMessageEmbed()
-                    .setAuthor("Community polls")
+                    .setAuthor({ name: "Community polls" })
                     .setTitle("/poll")
                     .setDescription("Manage community polls and find out what people want!")
                     .addField("Subcommands", `‎
@@ -120,7 +120,7 @@ module.exports = async (interaction, next) => {
             }
             case "purge": {
                 const embed = new PatchedMessageEmbed()
-                    .setAuthor("Message deletion utility")
+                    .setAuthor({ name: "Message deletion utility" })
                     .setTitle("/purge")
                     .setDescription("Purge messages in bulk from a channel.")
                     .addField("Parameters", `
@@ -136,7 +136,7 @@ module.exports = async (interaction, next) => {
             }
             case "role-selection": {
                 const embed = new PatchedMessageEmbed()
-                    .setAuthor("Community role-selection")
+                    .setAuthor({ name: "Community role-selection" })
                     .setTitle("/role-selection")
                     .setDescription("Manage role selections. Give people the ability to customize their member profile!")
                     .addField("Subcommands 1/2", `‎
@@ -177,7 +177,7 @@ module.exports = async (interaction, next) => {
             }
             case "info": {
                 const embed = new PatchedMessageEmbed()
-                    .setAuthor("Configuration inspection utility")
+                    .setAuthor({ name: "Configuration inspection utility" })
                     .setTitle("/info")
                     .setDescription("Get the active bot configuration.")
                     .addField("Parameters", "*none*")
@@ -204,8 +204,8 @@ module.exports = async (interaction, next) => {
                 .addField("Required permissions", "- `Manage roles`\n- `Send messages`\n- `Application commands`", true)
                 .addField("Core features", "This bot implements a CTFd integration (via `/ctfd`) with notifications about new challenges and solves along with some neat community management tools.")
                 .addField("How to use", "You can always check this message again with `/help` and learn more about specific commands by using `/help <command>`.")
-                .setFooter("I'm open source (MIT) on Github!")
-                .setAuthor("Testausserveri/challenge-fi-bot")
+                .setFooter({ text: "I'm open source (MIT) on Github!" })
+                .setAuthor({ name: "Testausserveri/challenge-fi-bot" })
                 .setColor("#667bc4")
             const button =
                 new MessageActionRow().addComponents(

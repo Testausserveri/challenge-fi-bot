@@ -40,6 +40,7 @@ module.exports = async (interaction, next) => {
 
         const roleSelection = await global.schemas.RoleSelectionModel.find({ id: interaction.guild.id }).exec()
         const polls = await global.schemas.PollModel.find({ id: interaction.guild.id }).exec()
+        const accessConfig = await global.schemas.ServerAccessModel.findOne({ id: interaction.guild.id }).exec()
         let ctfdIntegration = await global.schemas.CTFdIntegrationModel.findOne({ id: interaction.guild.id }).exec()
         if (ctfdIntegration === null) ctfdIntegration = {}
 
@@ -91,10 +92,13 @@ module.exports = async (interaction, next) => {
         }
 
         const embed = new PatchedMessageEmbed()
-            .setAuthor("Server configuration")
+            .setAuthor({ name: "Server configuration" })
             .setTitle(interaction.guild.name)
             .setColor("#667bc4")
             .setThumbnail(interaction.guild.iconURL())
+            .addField("Authorized role", `
+                Role: ${accessConfig !== null ? `<@&${accessConfig.role}>` : "none"}
+            `)
             .addField("Role selection(s)", `
                 Messages: ${roleSelectionData}
             `)
