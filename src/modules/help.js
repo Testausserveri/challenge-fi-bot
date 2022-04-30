@@ -5,6 +5,7 @@ const {
     MessageButton
 } = require("discord.js")
 const PatchedMessageEmbed = require("../utils/message_embed_patch")
+const { version } = require("../../package.json")
 
 /**
  * Some module
@@ -205,7 +206,7 @@ module.exports = async (interaction, next) => {
                 .addField("Core features", "This bot implements a CTFd integration (via `/ctfd`) with notifications about new challenges and solves along with some neat community management tools.")
                 .addField("How to use", "You can always check this message again with `/help` and learn more about specific commands by using `/help <command>`.")
                 .setFooter({ text: "I'm open source (MIT) on Github!" })
-                .setAuthor({ name: "Testausserveri/challenge-fi-bot" })
+                .setAuthor({ name: `Testausserveri/challenge-fi-bot \`v${version}\`` })
                 .setColor("#667bc4")
             const button =
                 new MessageActionRow().addComponents(

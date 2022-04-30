@@ -54,7 +54,7 @@ connect(process.env.DATABASE_URL).then(() => {
 // Connect to Discord
 client.on("ready", async () => {
     console.log(`Connected to Discord as ${client.user.username}#${client.user.discriminator} (${client.user.id}).`)
-    client.user.setActivity("HedgeHax 😎 — /help", { type: "PLAYING" })
+    client.user.setActivity(`HedgeHax 😎 — /help  — ${version}`, { type: "PLAYING" })
 
     // Register slash commands
     // NOTE: This feature has been removed by Discord (without notice...)
