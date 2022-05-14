@@ -54,8 +54,9 @@ module.exports = async (interaction, next) => {
             })
         }
 
-        const roleSelectionData = roleSelection.length !== 0 ? (await Promise.all(roleSelection.map(async (document) => (await findMessage(document.message, interaction.guild))?.url ?? "invalid-message"))).join(", ") : "none"
-        const pollData = polls.length !== 0 ? (await Promise.all(polls.map(async (document) => (await findMessage(document.message, interaction.guild))?.url ?? "invalid-message"))).join(" ") : "none"
+        // eslint-disable-next-line max-len
+        const roleSelectionData = roleSelection.length !== 0 ? (await Promise.all(roleSelection.map(async (document) => (await findMessage(document.message, interaction.guild))?.url ?? `invalid-message \`id: ${document.message}\``))).join(", ") : "none"
+        const pollData = polls.length !== 0 ? (await Promise.all(polls.map(async (document) => (await findMessage(document.message, interaction.guild))?.url ?? `invalid-message \`id: ${document.message}\``))).join(" ") : "none"
 
         const afterMessageQuery = performance.now()
         const messageQueryTimeTaken = afterMessageQuery - atQueryComplete
