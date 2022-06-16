@@ -1,7 +1,9 @@
 <div align="center">
     <img src="https://raw.githubusercontent.com/Testausserveri/challenge-fi-bot/main/stegosiili_.png" width="200px" height="200px">
-    <h1>Challenge.fi-bot</h1>
-    A community management bot for the <a href="https://challenge.fi">challenge.fi</a> Discord, which implements a CTFd-platform integration.
+
+# Challenge.fi-bot
+    
+A community management bot for the <a href="https://challenge.fi">challenge.fi</a> Discord, which implements a CTFd-platform integration.
 </div>
 <br>
 
