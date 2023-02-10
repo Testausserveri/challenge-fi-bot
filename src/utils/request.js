@@ -39,6 +39,10 @@ module.exports = async function request(method, url, headers, body) {
                     })
                 })
             })
+            req.on("error", (e) => {
+                console.error("Request error", e)
+                reject(e)
+            })
             if (headers) {
                 // eslint-disable-next-line no-restricted-syntax, guard-for-in
                 for (const header in headers) {
