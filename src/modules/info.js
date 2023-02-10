@@ -73,15 +73,20 @@ module.exports = async (interaction, next) => {
         let hostTestTimeTaken = "Unknown"
         if (Object.keys(ctfdIntegration).length > 0) {
             const beforeHostTest = performance.now()
-            const challengeTest = await request("GET", `${ctfdIntegration.apiUrl}api/v1/challenges`, {
-                "Content-Type": "application/json",
-                Authorization: `Token ${ctfdIntegration.apiToken}`
-            })
-            hostTestTimeTaken = performance.now() - beforeHostTest
-            if (challengeTest.status === 200) {
-                ctfdHostAvailability = "Operational"
-            } else {
-                ctfdHostAvailability = "Degraded/Outage"
+            try {
+                const challengeTest = await request("GET", `${ctfdIntegration.apiUrl}api/v1/challenges`, {
+                    "Content-Type": "application/json",
+                    Authorization: `Token ${ctfdIntegration.apiToken}`
+                })
+                hostTestTimeTaken = performance.now() - beforeHostTest
+                if (challengeTest.status === 200) {
+                    ctfdHostAvailability = "Operational"
+                } else {
+                    ctfdHostAvailability = "Degraded/Outage"
+                }
+            } catch (e) {
+                ctfdHostAvailability = "Error/Unavailable"
+                console.error("Unable to resolve ctfd host status", e)
             }
         }
 
