@@ -307,6 +307,13 @@ module.exports = [
                         required: true
                     }
                 ]
+            },
+            {
+                name: "clear-config",
+                description:
+                    "Clear all CTFd related configurations",
+                type: 1,
+                options: []
             }
         ]
     },

@@ -473,6 +473,26 @@ module.exports = async (interaction, next) => {
                     ephemeral: true
                 })
             }
+        } else if (interaction.options.getSubCommand() === "clear-config") {
+            // Defer reply
+            await interaction.deferReply({
+                ephemeral: true
+            })
+
+            // Delete configs
+            try {
+                await global.schemas.CTFdIntegrationModel.findOneAndRemove({ id: interaction.guild.id })
+                interaction.followUp({
+                    content: "Configurations cleared.",
+                    ephemeral: true
+                })
+            } catch (err) {
+                console.error("Failed to clear configs", err)
+                interaction.followUp({
+                    content: "Failed.",
+                    ephemeral: true
+                })
+            }
         }
     } else {
         next()
