@@ -473,7 +473,7 @@ module.exports = async (interaction, next) => {
                     ephemeral: true
                 })
             }
-        } else if (interaction.options.getSubCommand() === "clear-config") {
+        } else if (interaction.options.getSubcommand() === "clear-config") {
             // Defer reply
             await interaction.deferReply({
                 ephemeral: true
